@@ -1,0 +1,170 @@
+<template>
+  <v-container fluid class="pa-0 fill-height">
+    <v-row density="compact" class="fill-height ma-0">
+
+      <v-col
+        cols="12"
+        md="6"
+        class="bg-grey-lighten-4 d-none d-md-flex flex-column align-center pa-0"
+      >
+        <div class="flex-grow-1 d-flex align-center justify-center w-100 px-12">
+          <v-img
+            src="/login.jpg"
+            max-height="450"
+            width="100%"
+            contain
+            alt="Leave Management Illustration"
+          ></v-img>
+        </div>
+
+        <div class="text-center px-12 pb-12">
+          <h2 class="text-h4 font-weight-bold mb-4" style="color: #2c3e50;">
+            Simplify Time-Off Management
+          </h2>
+          <p class="text-subtitle-1 text-grey-darken-1 mx-auto" style="max-width: 480px; line-height: 1.6;">
+            Empower your team with a seamless way to request, track, and approve leaves in just a few clicks.
+          </p>
+
+          <div class="d-flex justify-center mt-8">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+      </v-col>
+
+      <v-col
+        cols="12"
+        md="6"
+        class="d-flex align-center justify-center bg-white"
+      >
+        <v-card flat width="420" class="pa-6">
+          <div class="text-center mb-10">
+            <h1 class="text-h4 font-weight-bold mb-1">Welcome Back!</h1>
+            <p class="text-body-2 text-grey-darken-1">Please enter your credentials to access your dashboard</p>
+          </div>
+
+          <v-form v-model="isFormValid" @submit.prevent="handleLogin">
+            <div class="mb-4">
+              <label class="text-subtitle-2 font-weight-bold mb-1 d-block">Email Address</label>
+              <v-text-field
+                v-model="form.email"
+                placeholder="name@company.com"
+                variant="outlined"
+                density="comfortable"
+                hide-details="auto"
+                color="orange-darken-2"
+                :rules="[v => !!v || 'Email is required', v => /.+@.+\..+/.test(v) || 'E-mail must be valid']"
+                required
+              ></v-text-field>
+            </div>
+
+            <div class="mb-2">
+              <label class="text-subtitle-2 font-weight-bold mb-1 d-block">Password</label>
+              <v-text-field
+                v-model="form.password"
+                type="password"
+                placeholder="••••••••"
+                variant="outlined"
+                density="comfortable"
+                hide-details="auto"
+                color="orange-darken-2"
+                :rules="[v => !!v || 'Password is required']"
+                required
+              ></v-text-field>
+            </div>
+
+            <div class="d-flex align-center justify-space-between mb-8">
+              <v-checkbox
+                label="Remember me"
+                hide-details
+                density="compact"
+                color="orange-darken-2"
+              ></v-checkbox>
+              <a href="#" class="text-caption text-decoration-none text-grey-darken-2 font-weight-medium">Forgot Password?</a>
+            </div>
+
+            <v-btn
+              block
+              color="grey-darken-4"
+              size="x-large"
+              type="submit"
+              class="text-none font-weight-bold"
+              elevation="0"
+              :loading="loading"
+              :disabled="!isFormValid"
+            >
+              Login <v-icon end icon="mdi-arrow-right" size="small"></v-icon>
+            </v-btn>
+
+            <v-alert
+              v-if="authStore.loginFailed"
+              type="error"
+              variant="tonal"
+              class="mt-4"
+              density="compact"
+            >
+              Invalid email or password.
+            </v-alert>
+          </v-form>
+
+          <div class="mt-10 text-center">
+            <p class="text-body-2">
+              New to the platform?
+              <a href="#" class="text-blue-darken-2 font-weight-bold text-decoration-none">Request Access</a>
+            </p>
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+const authStore = useAuthStore()
+const loading = ref(false)
+const isFormValid = ref(false)
+
+const form = reactive({
+  email: '',
+  password: ''
+})
+
+const handleLogin = async () => {
+  if (!isFormValid.value) return
+  loading.value = true
+  try {
+    // Note: authStore login expects { value: { email, password } }
+    await authStore.login({ value: form })
+  } finally {
+    loading.value = false
+  }
+}
+</script>
+
+<style scoped>
+.fill-height {
+  height: 100vh;
+  min-height: 650px;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  background-color: #d1d1d1;
+  border-radius: 50%;
+  margin: 0 6px;
+}
+.dot.active {
+  width: 28px;
+  background-color: #f4511e;
+  border-radius: 10px;
+}
+.ma-0 { margin: 0 !important; }
+</style>
+
+<route lang="yaml">
+meta:
+  layout: blank
+</route>
