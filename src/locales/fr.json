@@ -1,0 +1,110 @@
+{
+  "app": {
+    "title": "Système de gestion des congés",
+    "title_sidebar": "Gérer Congés",
+    "settings": "Paramètres du compte",
+    "language": "Langue",
+    "security": "Sécurité",
+    "profile_picture": "Photo de profil",
+    "current_password": "Mot de passe actuel",
+    "new_password": "Nouveau mot de passe",
+    "confirm_new_password": "Confirmer le nouveau mot de passe",
+    "update_password": "Modifier le mot de passe",
+    "upload_photo": "Télécharger une nouvelle photo",
+    "save_photo": "Enregistrer la photo",
+    "required": "Champs requis",
+    "password_min_length": "Doit contenir au moins 8 caractères",
+    "password_mismatch": "Les mots de passe ne correspondent pas",
+    "cancel": "Annuler",
+    "save_changes": "Enregistrer les modifications",
+    "logout": "Déconnexion",
+    "login": {
+      "title": "Simplifiez la gestion des congés",
+      "subtitle": "Permettez à votre équipe de demander, suivre et approuver facilement les congés en quelques clics.",
+      "welcome": "Bon retour !",
+      "credentials_prompt": "Veuillez entrer vos identifiants pour accéder à votre tableau de bord",
+      "email": "Adresse e-mail",
+      "email_placeholder": "nom@entreprise.com",
+      "email_required": "L'e-mail est requis",
+      "email_invalid": "L'e-mail doit être valide",
+      "password": "Mot de passe",
+      "password_required": "Le mot de passe est requis",
+      "remember_me": "Se souvenir de moi",
+      "forgot_password": "Mot de passe oublié ?",
+      "action": "Connexion",
+      "error_invalid": "E-mail ou mot de passe invalide.",
+      "new_user": "Nouveau sur la plateforme ?",
+      "request_access": "Demander un accès"
+    },
+    "sidebar": {
+      "welcome": "Bienvenue",
+      "users": "Utilisateurs",
+      "roles": "Rôles",
+      "languages": "Langues"
+    },
+    "profile": {
+      "image": {
+        "update-success": "Photo de profil mise à jour avec succès !"
+      },
+      "password": {
+        "update-success": "Mot de passe mis à jour avec succès !"
+      }
+    },
+    "languages": {
+      "title": "Gestion des langues",
+      "description": "Configurez les langues et les locales disponibles.",
+      "name_header": "Nom",
+      "code_header": "Code"
+    },
+    "roles": {
+      "title": "Gestion des rôles",
+      "description": "Gérez les niveaux d'accès, les permissions spécifiques au système et personnalisez les icônes.",
+      "no_description": "Aucune description définie.",
+      "no_permission_desc": "Aucune description disponible pour cette permission.",
+      "no_permissions_assigned": "Aucune permission assignée",
+      "edit_role": "Modifier le rôle : {name}",
+      "access_description": "Description de l'accès",
+      "select_icon": "Choisir l'icône d'affichage",
+      "headers": {
+        "name": "Nom",
+        "description": "Description",
+        "permissions": "Permissions",
+        "actions": "Actions"
+      }
+    },
+    "users": {
+      "title": "Gestion des utilisateurs",
+      "subtitle": "Annuaire typé avec gestion modulaire des rôles.",
+      "search_placeholder": "Rechercher des utilisateurs...",
+      "add_user": "Ajouter utilisateur",
+      "edit_user": "Modifier l'utilisateur",
+      "new_user": "Nouvel utilisateur",
+      "upload_hint": "Cliquez pour télécharger une photo",
+      "firstname": "Prénom",
+      "lastname": "Nom",
+      "password": "Mot de passe",
+      "min_8": "Min 8 caractères",
+      "role": "Rôle",
+      "employee_number": "Matricule",
+      "status_active": "Statut : Actif",
+      "status_inactive": "Statut : Inactif",
+      "birth_date": "Date de naissance",
+      "hire_date": "Date d'embauche",
+      "cycle_start_date": "Date de début de cycle",
+      "birth_date_error": "La date de naissance doit être dans le passé",
+      "delete_confirm": "Supprimer {name} ?",
+      "table": {
+        "user": "Utilisateur",
+        "id_number": "Matricule",
+        "role": "Rôle",
+        "status": "Statut",
+        "actions": "Actions"
+      }
+    },
+    "generic": {
+      "required": "Requis",
+      "cancel": "Annuler",
+      "save": "Enregistrer"
+    }
+  }
+}

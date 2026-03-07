@@ -3,9 +3,9 @@
     <v-row>
       <v-col cols="12" class="d-flex align-center justify-space-between mb-4">
         <div>
-          <h1 class="text-h4 font-weight-bold mb-1">Role Management</h1>
+          <h1 class="text-h4 font-weight-bold mb-1">{{ $t('app.roles.title') }}</h1>
           <p class="text-subtitle-1 text-grey-darken-1">
-            View access levels, specific system permissions and manage icons and descriptions.
+            {{ $t('app.roles.description') }}
           </p>
         </div>
       </v-col>
@@ -13,7 +13,7 @@
       <v-col cols="12">
         <v-card flat border class="rounded-lg">
           <v-data-table
-            :headers="headers"
+            :headers="translatedHeaders"
             :items="roleStore.roles"
             :loading="roleStore.loading"
             hover
@@ -37,7 +37,7 @@
 
             <template #[`item.description`]="{ item }">
               <span class="text-body-2 text-grey-darken-1">
-                {{ item.description || 'No description set.' }}
+                {{ item.description || $t('app.roles.no_description') }}
               </span>
             </template>
 
@@ -55,7 +55,7 @@
 
                   <v-tooltip activator="parent" location="top" open-delay="200" max-width="250">
                     <div class="text-caption">
-                      {{ perm.description || 'No description available for this permission.' }}
+                      {{ perm.description || $t('app.roles.no_permission_desc') }}
                     </div>
                   </v-tooltip>
                 </v-chip>
@@ -64,7 +64,7 @@
                   v-if="!item.permissions?.length"
                   class="text-caption text-grey-lighten-1 italic"
                 >
-                  No permissions assigned
+                  {{ $t('app.roles.no_permissions_assigned') }}
                 </span>
               </div>
             </template>
@@ -84,7 +84,7 @@
     <v-dialog v-model="editDialog" max-width="600px" persistent>
       <v-card class="pa-4 rounded-lg">
         <v-card-title class="font-weight-bold text-h5 mb-2">
-          Edit Role: {{ formatRoleName(roleForm.name) }}
+          {{ $t('app.roles.edit_role', { name: formatRoleName(roleForm.name) }) }}
         </v-card-title>
 
         <v-card-text>
@@ -92,7 +92,7 @@
             <v-col cols="12">
               <v-textarea
                 v-model="roleForm.description"
-                label="Access Description"
+                :label="$t('app.roles.access_description')"
                 variant="outlined"
                 rows="3"
                 auto-grow
@@ -103,7 +103,7 @@
             </v-col>
 
             <v-col cols="12">
-              <p class="text-subtitle-2 mb-2 text-grey-darken-1">Select Display Icon</p>
+              <p class="text-subtitle-2 mb-2 text-grey-darken-1">{{ $t('app.roles.select_icon') }}</p>
               <IconPicker v-model="roleForm.icon" />
             </v-col>
           </v-row>
@@ -111,9 +111,9 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn variant="text" @click="editDialog = false">Cancel</v-btn>
+          <v-btn variant="text" @click="editDialog = false">{{ $t('app.cancel') }}</v-btn>
           <v-btn color="black" variant="flat" :loading="isSaving" @click="saveRole">
-            Save Changes
+            {{ $t('app.save_changes') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -122,10 +122,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoleStore } from '@/stores/role'
 import IconPicker from '@/components/IconPicker.vue'
 
+const { t } = useI18n()
 const roleStore = useRoleStore()
 const editDialog = ref(false)
 const isSaving = ref(false)
@@ -137,12 +139,12 @@ const roleForm = reactive({
   description: '',
 })
 
-const headers = [
-  { title: 'Role Name', key: 'name', width: '200px' },
-  { title: 'Description', key: 'description', width: '250px', sortable: false },
-  { title: 'Permissions', key: 'permissions', sortable: false },
-  { title: 'Actions', key: 'actions', align: 'end' as const, sortable: false },
-]
+const translatedHeaders = computed(() => [
+  { title: t('app.roles.headers.name'), key: 'name', width: '200px' },
+  { title: t('app.roles.headers.description'), key: 'description', width: '250px', sortable: false },
+  { title: t('app.roles.headers.permissions'), key: 'permissions', sortable: false },
+  { title: t('app.roles.headers.actions'), key: 'actions', align: 'end' as const, sortable: false },
+])
 
 onMounted(() => roleStore.fetchRoles())
 
@@ -172,9 +174,7 @@ const saveRole = async () => {
       description: roleForm.description,
     })
 
-    // Refresh the API to reflect changes in the table
     await roleStore.fetchRoles()
-
     editDialog.value = false
   } catch (error) {
     console.error('Update failed:', error)

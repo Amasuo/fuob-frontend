@@ -6,7 +6,7 @@
           <v-avatar color="orange-darken-2" size="40" class="mr-3">
             <v-icon color="white">mdi-calendar-check</v-icon>
           </v-avatar>
-          <span class="text-h6 font-weight-bold text-grey-darken-4">Manage Leaves</span>
+          <span class="text-h6 font-weight-bold text-grey-darken-4">{{ $t('app.title_sidebar') }}</span>
         </div>
 
         <v-list density="comfortable" nav class="bg-transparent">
@@ -25,7 +25,7 @@
         <v-list density="compact" nav class="bg-transparent">
           <v-list-item
             prepend-icon="mdi-logout"
-            title="Logout"
+            :title="$t('app.logout')"
             color="red-darken-2"
             @click="handleLogout"
           ></v-list-item>
@@ -36,7 +36,7 @@
     <v-app-bar flat border-b color="white">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title class="text-subtitle-1 font-weight-bold text-grey-darken-2">
-        Leave Management System
+        {{ $t('app.title') }}
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -50,27 +50,23 @@
             elevation="2"
             :color="safeUser.profile_image ? 'transparent' : 'orange-lighten-4'"
           >
-            <v-img
-              v-if="safeUser.profile_image"
-              :src="safeUser.profile_image"
-              cover
-            ></v-img>
+            <v-img v-if="safeUser.profile_image" :src="safeUser.profile_image" cover></v-img>
             <span v-else class="text-subtitle-1 font-weight-bold text-orange-darken-4">
-        {{ safeUser.firstname?.[0] || 'U' }}{{ safeUser.lastname?.[0] || 'N' }}
-      </span>
+              {{ safeUser.firstname?.[0] || 'U' }}{{ safeUser.lastname?.[0] || 'N' }}
+            </span>
           </v-avatar>
         </template>
 
         <v-list class="py-2" min-width="180">
           <v-list-item
             prepend-icon="mdi-cog-outline"
-            title="Settings"
+            :title="$t('app.settings')"
             @click="goToSettings"
           ></v-list-item>
           <v-divider class="my-1"></v-divider>
           <v-list-item
             prepend-icon="mdi-logout"
-            title="Logout"
+            :title="$t('app.logout')"
             color="red-darken-2"
             @click="handleLogout"
           ></v-list-item>
@@ -89,15 +85,16 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
+import { useI18n } from 'vue-i18n'
 import routes from '~pages'
 import { adminPages, hrPages, validatorPages } from '@/router'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { t } = useI18n()
 const { user, isAdmin, isHr, isValidator, isSimple } = storeToRefs(authStore)
 const drawer = ref(true)
 
-// Safe user object for template use
 const safeUser = computed(
   () =>
     user.value || {
@@ -139,8 +136,11 @@ const menuItems = computed(() => {
 
 const formatTitle = (name: string) => {
   if (!name) return ''
-  if (name.toLowerCase() === 'hr') return 'HR'
-  return name.charAt(0).toUpperCase() + name.slice(1).replace(/-/g, ' ')
+  const key = `app.sidebar.${name.toLowerCase()}`
+  const translated = t(key)
+  return translated !== key
+    ? translated
+    : name.charAt(0).toUpperCase() + name.slice(1).replace(/-/g, ' ')
 }
 
 const getIcon = (name: string) => {
@@ -148,6 +148,7 @@ const getIcon = (name: string) => {
     welcome: 'mdi-view-dashboard-outline',
     users: 'mdi-account-group-outline',
     roles: 'mdi-file-document-outline',
+    languages: 'mdi-translate',
   }
   return icons[name.toLowerCase()] || 'mdi-file-outline'
 }

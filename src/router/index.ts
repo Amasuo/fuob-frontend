@@ -20,6 +20,7 @@ const publicPages = ['/login', '/forbidden']
 export const adminPages = [
   'users',
   'roles',
+  'languages',
 ]
 
 export const validatorPages = []

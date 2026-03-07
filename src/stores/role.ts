@@ -25,7 +25,6 @@ export const useRoleStore = defineStore('role', {
             Authorization: `Bearer ${authStore.token}`,
             Accept: 'application/json',
           },
-          // Note: If your roles list is small, you might not need pagination params here
           params: { page: 1, search: '' },
         })
 

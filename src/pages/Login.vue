@@ -1,7 +1,6 @@
 <template>
   <v-container fluid class="pa-0 fill-height">
     <v-row density="compact" class="fill-height ma-0">
-
       <v-col
         cols="12"
         md="6"
@@ -18,11 +17,14 @@
         </div>
 
         <div class="text-center px-12 pb-12">
-          <h2 class="text-h4 font-weight-bold mb-4" style="color: #2c3e50;">
-            Simplify Time-Off Management
+          <h2 class="text-h4 font-weight-bold mb-4" style="color: #2c3e50">
+            {{ $t('app.login.title') }}
           </h2>
-          <p class="text-subtitle-1 text-grey-darken-1 mx-auto" style="max-width: 480px; line-height: 1.6;">
-            Empower your team with a seamless way to request, track, and approve leaves in just a few clicks.
+          <p
+            class="text-subtitle-1 text-grey-darken-1 mx-auto"
+            style="max-width: 480px; line-height: 1.6"
+          >
+            {{ $t('app.login.subtitle') }}
           </p>
 
           <div class="d-flex justify-center mt-8">
@@ -33,34 +35,37 @@
         </div>
       </v-col>
 
-      <v-col
-        cols="12"
-        md="6"
-        class="d-flex align-center justify-center bg-white"
-      >
+      <v-col cols="12" md="6" class="d-flex align-center justify-center bg-white">
         <v-card flat width="420" class="pa-6">
           <div class="text-center mb-10">
-            <h1 class="text-h4 font-weight-bold mb-1">Welcome Back!</h1>
-            <p class="text-body-2 text-grey-darken-1">Please enter your credentials to access your dashboard</p>
+            <h1 class="text-h4 font-weight-bold mb-1">{{ $t('app.login.welcome') }}</h1>
+            <p class="text-body-2 text-grey-darken-1">{{ $t('app.login.credentials_prompt') }}</p>
           </div>
 
           <v-form v-model="isFormValid" @submit.prevent="handleLogin">
             <div class="mb-4">
-              <label class="text-subtitle-2 font-weight-bold mb-1 d-block">Email Address</label>
+              <label class="text-subtitle-2 font-weight-bold mb-1 d-block">{{
+                $t('app.login.email')
+              }}</label>
               <v-text-field
                 v-model="form.email"
-                placeholder="name@company.com"
+                :placeholder="$t('app.login.email_placeholder')"
                 variant="outlined"
                 density="comfortable"
                 hide-details="auto"
                 color="orange-darken-2"
-                :rules="[v => !!v || 'Email is required', v => /.+@.+\..+/.test(v) || 'E-mail must be valid']"
+                :rules="[
+                  (v) => !!v || $t('app.login.email_required'),
+                  (v) => /.+@.+\..+/.test(v) || $t('app.login.email_invalid'),
+                ]"
                 required
               ></v-text-field>
             </div>
 
             <div class="mb-2">
-              <label class="text-subtitle-2 font-weight-bold mb-1 d-block">Password</label>
+              <label class="text-subtitle-2 font-weight-bold mb-1 d-block">{{
+                $t('app.login.password')
+              }}</label>
               <v-text-field
                 v-model="form.password"
                 type="password"
@@ -69,19 +74,24 @@
                 density="comfortable"
                 hide-details="auto"
                 color="orange-darken-2"
-                :rules="[v => !!v || 'Password is required']"
+                :rules="[(v) => !!v || $t('app.login.password_required')]"
                 required
               ></v-text-field>
             </div>
 
             <div class="d-flex align-center justify-space-between mb-8">
               <v-checkbox
-                label="Remember me"
+                :label="$t('app.login.remember_me')"
                 hide-details
                 density="compact"
                 color="orange-darken-2"
               ></v-checkbox>
-              <a href="#" class="text-caption text-decoration-none text-grey-darken-2 font-weight-medium">Forgot Password?</a>
+              <a
+                href="#"
+                class="text-caption text-decoration-none text-grey-darken-2 font-weight-medium"
+              >
+                {{ $t('app.login.forgot_password') }}
+              </a>
             </div>
 
             <v-btn
@@ -94,7 +104,8 @@
               :loading="loading"
               :disabled="!isFormValid"
             >
-              Login <v-icon end icon="mdi-arrow-right" size="small"></v-icon>
+              {{ $t('app.login.action') }}
+              <v-icon end icon="mdi-arrow-right" size="small"></v-icon>
             </v-btn>
 
             <v-alert
@@ -104,14 +115,16 @@
               class="mt-4"
               density="compact"
             >
-              Invalid email or password.
+              {{ $t('app.login.error_invalid') }}
             </v-alert>
           </v-form>
 
           <div class="mt-10 text-center">
             <p class="text-body-2">
-              New to the platform?
-              <a href="#" class="text-blue-darken-2 font-weight-bold text-decoration-none">Request Access</a>
+              {{ $t('app.login.new_user') }}
+              <a href="#" class="text-blue-darken-2 font-weight-bold text-decoration-none">{{
+                $t('app.login.request_access')
+              }}</a>
             </p>
           </div>
         </v-card>
@@ -123,20 +136,21 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+
 const authStore = useAuthStore()
 const loading = ref(false)
 const isFormValid = ref(false)
 
 const form = reactive({
   email: '',
-  password: ''
+  password: '',
 })
 
 const handleLogin = async () => {
   if (!isFormValid.value) return
   loading.value = true
   try {
-    // Note: authStore login expects { value: { email, password } }
+    // Calling the authStore action
     await authStore.login({ value: form })
   } finally {
     loading.value = false
@@ -149,6 +163,7 @@ const handleLogin = async () => {
   height: 100vh;
   min-height: 650px;
 }
+
 .dot {
   width: 8px;
   height: 8px;
@@ -156,12 +171,16 @@ const handleLogin = async () => {
   border-radius: 50%;
   margin: 0 6px;
 }
+
 .dot.active {
   width: 28px;
   background-color: #f4511e;
   border-radius: 10px;
 }
-.ma-0 { margin: 0 !important; }
+
+.ma-0 {
+  margin: 0 !important;
+}
 </style>
 
 <route lang="yaml">

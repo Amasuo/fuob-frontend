@@ -15,6 +15,8 @@ export interface User {
   is_employee: boolean;
   is_simple: boolean;
   profile_image: string;
+  language_id: number | null;
+  language_code: string | null;
 }
 
 export interface UserPaginationParams {

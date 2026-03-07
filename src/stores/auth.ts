@@ -140,5 +140,29 @@ export const useAuthStore = defineStore('auth', {
         this.user.profile_image = response.data.data.profile_image;
       }
     },
+
+    async updateLanguage(languageId: number) {
+      try {
+        const response = await axios.put(
+          '/api/profile/language',
+          { language_id: languageId },
+          this.getAuthConfig()
+        );
+
+        // 1. Show success feedback
+        showSuccessToast(response.data.message || 'Language updated successfully!');
+
+        // 2. Update local user state if needed
+        if (this.user) {
+          this.user.language_id = languageId;
+        }
+
+        // 3. Return success
+        return { success: true };
+      } catch (error: any) {
+        showErrorToast(error.response?.data?.message || 'Failed to update language.');
+        return { success: false };
+      }
+    },
   },
 })

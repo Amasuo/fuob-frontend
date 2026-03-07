@@ -1,0 +1,110 @@
+{
+  "app": {
+    "title": "Leave Management System",
+    "title_sidebar": "Manage Leaves",
+    "settings": "Account Settings",
+    "language": "Language",
+    "security": "Security",
+    "profile_picture": "Profile Picture",
+    "current_password": "Current Password",
+    "new_password": "New Password",
+    "confirm_new_password": "Confirm New Password",
+    "update_password": "Update Password",
+    "upload_photo": "Upload new photo",
+    "save_photo": "Save Photo",
+    "required": "Required",
+    "password_min_length": "Must be at least 8 characters",
+    "password_mismatch": "Passwords do not match",
+    "cancel": "Cancel",
+    "save_changes": "Save Changes",
+    "logout": "Logout",
+    "login": {
+      "title": "Simplify Time-Off Management",
+      "subtitle": "Empower your team with a seamless way to request, track, and approve leaves in just a few clicks.",
+      "welcome": "Welcome Back!",
+      "credentials_prompt": "Please enter your credentials to access your dashboard",
+      "email": "Email Address",
+      "email_placeholder": "name@company.com",
+      "email_required": "Email is required",
+      "email_invalid": "E-mail must be valid",
+      "password": "Password",
+      "password_required": "Password is required",
+      "remember_me": "Remember me",
+      "forgot_password": "Forgot Password?",
+      "action": "Login",
+      "error_invalid": "Invalid email or password.",
+      "new_user": "New to the platform?",
+      "request_access": "Request Access"
+    },
+    "sidebar": {
+      "welcome": "Welcome",
+      "users": "Users",
+      "roles": "Roles",
+      "languages": "Languages"
+    },
+    "profile": {
+      "image": {
+        "update-success": "Profile picture updated successfully!"
+      },
+      "password": {
+        "update-success": "Password updated successfully!"
+      }
+    },
+    "languages": {
+      "title": "Language Management",
+      "description": "Configure available system languages and locales.",
+      "name_header": "Name",
+      "code_header": "Code"
+    },
+    "roles": {
+      "title": "Role Management",
+      "description": "View access levels, specific system permissions and manage icons and descriptions.",
+      "no_description": "No description set.",
+      "no_permission_desc": "No description available for this permission.",
+      "no_permissions_assigned": "No permissions assigned",
+      "edit_role": "Edit Role: {name}",
+      "access_description": "Access Description",
+      "select_icon": "Select Display Icon",
+      "headers": {
+        "name": "Name",
+        "description": "Description",
+        "permissions": "Permissions",
+        "actions": "Actions"
+      }
+    },
+    "users": {
+      "title": "User Management",
+      "subtitle": "Strongly typed directory with modular role management.",
+      "search_placeholder": "Search users...",
+      "add_user": "Add User",
+      "edit_user": "Edit User",
+      "new_user": "New User",
+      "upload_hint": "Click to upload photo",
+      "firstname": "First Name",
+      "lastname": "Last Name",
+      "password": "Password",
+      "min_8": "Min 8 characters",
+      "role": "Role",
+      "employee_number": "Employee Number",
+      "status_active": "Status: Active",
+      "status_inactive": "Status: Inactive",
+      "birth_date": "Birth Date",
+      "hire_date": "Hire Date",
+      "cycle_start_date": "Cycle Start Date",
+      "birth_date_error": "Birth date must be in the past",
+      "delete_confirm": "Delete {name}?",
+      "table": {
+        "user": "User",
+        "id_number": "ID Number",
+        "role": "Role",
+        "status": "Status",
+        "actions": "Actions"
+      }
+    },
+    "generic": {
+      "required": "Required",
+      "cancel": "Cancel",
+      "save": "Save"
+    }
+  }
+}

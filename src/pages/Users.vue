@@ -3,16 +3,16 @@
     <v-row>
       <v-col cols="12" class="d-flex align-center justify-space-between mb-4">
         <div>
-          <h1 class="text-h4 font-weight-bold mb-1">User Management</h1>
+          <h1 class="text-h4 font-weight-bold mb-1">{{ $t('app.users.title') }}</h1>
           <p class="text-subtitle-1 text-grey-darken-1">
-            Strongly typed directory with modular role management.
+            {{ $t('app.users.subtitle') }}
           </p>
         </div>
         <div class="d-flex align-center" style="gap: 16px">
           <v-text-field
             v-model="searchQuery"
             prepend-inner-icon="mdi-magnify"
-            label="Search users..."
+            :label="$t('app.users.search_placeholder')"
             variant="outlined"
             density="comfortable"
             hide-details
@@ -21,7 +21,7 @@
           ></v-text-field>
 
           <v-btn color="grey-darken-4" prepend-icon="mdi-plus" height="48" @click="openAddModal">
-            Add User
+            {{ $t('app.users.add_user') }}
           </v-btn>
         </div>
       </v-col>
@@ -41,7 +41,7 @@
             @update:options="loadItems"
             @click:row="(_e, { item }) => editUser(item as User)"
           >
-            <template #[`item.firstname`]="{ item }">
+            <template #[`item.name`]="{ item }">
               <div class="d-flex align-center py-2">
                 <v-avatar
                   size="40"
@@ -81,7 +81,11 @@
                 :color="(item as User).is_active ? 'green' : 'grey'"
                 variant="tonal"
               >
-                {{ (item as User).is_active ? 'Active' : 'Inactive' }}
+                {{
+                  (item as User).is_active
+                    ? $t('app.users.status_active')
+                    : $t('app.users.status_inactive')
+                }}
               </v-chip>
             </template>
 
@@ -116,7 +120,7 @@
     <v-dialog v-model="dialog" max-width="800px" persistent>
       <v-card class="rounded-lg pa-4">
         <v-card-title class="font-weight-bold">
-          {{ isEdit ? 'Edit User' : 'New User' }}
+          {{ isEdit ? $t('app.users.edit_user') : $t('app.users.new_user') }}
         </v-card-title>
         <v-card-text>
           <v-form ref="formRef">
@@ -151,24 +155,24 @@
                     accept="image/*"
                     @change="onFileSelected"
                   />
-                  <div class="text-caption mt-2 text-grey">Click to upload photo</div>
+                  <div class="text-caption mt-2 text-grey">{{ $t('app.users.upload_hint') }}</div>
                 </div>
               </v-col>
 
               <v-col cols="12" sm="6">
                 <v-text-field
                   v-model="editedItem.firstname"
-                  label="First Name"
+                  :label="$t('app.users.firstname')"
                   variant="outlined"
-                  :rules="[(v) => !!v || 'Required']"
+                  :rules="[(v) => !!v || $t('app.generic.required')]"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
                 <v-text-field
                   v-model="editedItem.lastname"
-                  label="Last Name"
+                  :label="$t('app.users.lastname')"
                   variant="outlined"
-                  :rules="[(v) => !!v || 'Required']"
+                  :rules="[(v) => !!v || $t('app.generic.required')]"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" :sm="isEdit ? 12 : 6">
@@ -176,20 +180,20 @@
                   v-model="editedItem.email"
                   label="Email"
                   variant="outlined"
-                  :rules="[(v) => !!v || 'Required']"
+                  :rules="[(v) => !!v || $t('app.generic.required')]"
                 ></v-text-field>
               </v-col>
               <v-col v-if="!isEdit" cols="12" sm="6">
                 <v-text-field
                   v-model="editedItem.password"
-                  label="Password"
+                  :label="$t('app.users.password')"
                   variant="outlined"
                   :type="showPassword ? 'text' : 'password'"
                   :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                   @click:append-inner="showPassword = !showPassword"
                   :rules="[
-                    (v) => !!v || 'Required',
-                    (v) => (v && v.length >= 8) || 'Min 8 characters',
+                    (v) => !!v || $t('app.generic.required'),
+                    (v) => (v && v.length >= 8) || $t('app.users.min_8'),
                   ]"
                 ></v-text-field>
               </v-col>
@@ -199,7 +203,7 @@
                   :items="roleStore.roles"
                   :item-title="(item) => formatRoleName(item.name)"
                   item-value="name"
-                  label="Role"
+                  :label="$t('app.users.role')"
                   variant="outlined"
                   :loading="roleStore.loading"
                 >
@@ -211,14 +215,18 @@
               <v-col cols="12" sm="4">
                 <v-text-field
                   v-model="editedItem.employee_number"
-                  label="Employee Number"
+                  :label="$t('app.users.employee_number')"
                   variant="outlined"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="4" class="d-flex align-center px-4">
                 <v-switch
                   v-model="editedItem.is_active"
-                  :label="editedItem.is_active ? 'Status: Active' : 'Status: Inactive'"
+                  :label="
+                    editedItem.is_active
+                      ? $t('app.users.status_active')
+                      : $t('app.users.status_inactive')
+                  "
                   color="green"
                   inset
                   hide-details
@@ -227,7 +235,7 @@
               <v-col cols="12" sm="4">
                 <v-text-field
                   v-model="editedItem.birth_date"
-                  label="Birth Date"
+                  :label="$t('app.users.birth_date')"
                   type="date"
                   variant="outlined"
                   persistent-placeholder
@@ -237,7 +245,7 @@
               <v-col cols="12" sm="4">
                 <v-text-field
                   v-model="editedItem.hire_date"
-                  label="Hire Date"
+                  :label="$t('app.users.hire_date')"
                   type="date"
                   variant="outlined"
                   persistent-placeholder
@@ -246,7 +254,7 @@
               <v-col cols="12" sm="4">
                 <v-text-field
                   v-model="editedItem.cycle_start_date"
-                  label="Cycle Start Date"
+                  :label="$t('app.users.cycle_start_date')"
                   type="date"
                   variant="outlined"
                   persistent-placeholder
@@ -257,8 +265,10 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn variant="text" @click="dialog = false">Cancel</v-btn>
-          <v-btn color="black" :loading="userStore.saving" @click="handleSave">Save</v-btn>
+          <v-btn variant="text" @click="dialog = false">{{ $t('app.generic.cancel') }}</v-btn>
+          <v-btn color="black" :loading="userStore.saving" @click="handleSave">
+            {{ $t('app.generic.save') }}
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -266,12 +276,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useRoleStore } from '@/stores/role'
 import { useAuthStore } from '@/stores/auth'
+import { useI18n } from 'vue-i18n'
 import type { User } from '@/types/user'
 
+const { t } = useI18n()
 const userStore = useUserStore()
 const roleStore = useRoleStore()
 
@@ -289,13 +301,14 @@ const itemsPerPage = ref(10)
 const currentPage = ref(1)
 let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
-const headers = [
-  { title: 'User', key: 'firstname' },
-  { title: 'ID Number', key: 'employee_number' },
-  { title: 'Role', key: 'role', sortable: false },
-  { title: 'Status', key: 'is_active', align: 'center' as const },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'end' as const },
-]
+// Reactive headers to allow language switching
+const headers = computed(() => [
+  { title: t('app.users.table.user'), key: 'name' },
+  { title: t('app.users.table.id_number'), key: 'employee_number' },
+  { title: t('app.users.table.role'), key: 'role', sortable: false },
+  { title: t('app.users.table.status'), key: 'is_active', align: 'center' as const },
+  { title: t('app.users.table.actions'), key: 'actions', sortable: false, align: 'end' as const },
+])
 
 const editedItem = reactive<User & { password?: string; profile_image?: string }>({
   id: null,
@@ -352,7 +365,7 @@ const validateBirthDate = (value: string) => {
   const selectedDate = new Date(value)
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-  return selectedDate < today || 'Birth date must be in the past'
+  return selectedDate < today || t('app.users.birth_date_error')
 }
 
 const getUserRole = (u: User) => {
@@ -387,10 +400,22 @@ const openAddModal = () => {
   imagePreview.value = null
   selectedFile.value = null
   Object.assign(editedItem, {
-    id: null, firstname: '', lastname: '', email: '', password: '',
-    is_active: true, employee_number: '', hire_date: '', birth_date: '',
-    cycle_start_date: '', is_admin: false, is_hr: false,
-    is_validator: false, is_employee: true, is_simple: false, profile_image: ''
+    id: null,
+    firstname: '',
+    lastname: '',
+    email: '',
+    password: '',
+    is_active: true,
+    employee_number: '',
+    hire_date: '',
+    birth_date: '',
+    cycle_start_date: '',
+    is_admin: false,
+    is_hr: false,
+    is_validator: false,
+    is_employee: true,
+    is_simple: false,
+    profile_image: '',
   })
   currentRole.value = 'employee'
   dialog.value = true
@@ -428,24 +453,18 @@ const handleSave = async () => {
     is_simple: roleName === 'simple',
   }
 
-  // Handle image upload if a file was selected
   if (selectedFile.value) {
-    (payload as any).image_file = selectedFile.value
+    ;(payload as any).image_file = selectedFile.value
   }
 
-  // Remove password from payload if not provided during edit
   if (isEdit.value && !payload.password) delete payload.password
 
-  // 1. Perform the save operation
   await userStore.saveUser(payload as any, isEdit.value)
 
-  // 2. If the user being edited is the current user, refresh the global auth state
-  // This triggers a request to /api/user/current to get fresh profile data
   if (authStore.user && authStore.user.id === editedItem.id) {
     await authStore.getCurrentUser()
   }
 
-  // 3. Refresh the users table to show the latest data
   await userStore.fetchUsers({
     search: search.value,
     page: currentPage.value,
@@ -456,7 +475,10 @@ const handleSave = async () => {
 }
 
 const confirmDelete = async (item: User) => {
-  if (item.id && confirm(`Delete ${item.firstname} ${item.lastname}?`)) {
+  if (
+    item.id &&
+    confirm(t('app.users.delete_confirm', { name: `${item.firstname} ${item.lastname}` }))
+  ) {
     await userStore.deleteUser(item.id)
     await userStore.fetchUsers({
       search: search.value,
@@ -471,7 +493,7 @@ const confirmDelete = async (item: User) => {
 .cursor-pointer :deep(tbody tr) {
   cursor: pointer;
 }
-/* Updated border style for the avatars */
+
 .border-avatar {
   border: 1px solid #e0e0e0 !important;
 }
