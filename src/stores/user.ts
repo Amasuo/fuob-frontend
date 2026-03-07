@@ -1,7 +1,18 @@
 import { defineStore } from 'pinia';
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { type AxiosRequestConfig } from 'axios';
 import { useAuthStore } from './auth';
 import type { User, UserPaginationParams } from '@/types/user';
+
+interface UserPayload extends Partial<User> {
+  password?: string;
+  image_file?: File | null;
+  is_admin: boolean;
+  is_hr: boolean;
+  is_validator: boolean;
+  is_employee: boolean;
+  is_simple: boolean;
+  _method?: string;
+}
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -22,7 +33,7 @@ export const useUserStore = defineStore('user', {
       };
     },
 
-    async fetchUsers(params: UserPaginationParams) {
+    async fetchUsers(params: UserPaginationParams): Promise<void> {
       this.loading = true;
       try {
         const response = await axios.get('http://localhost/api/user', {
@@ -43,21 +54,42 @@ export const useUserStore = defineStore('user', {
       }
     },
 
-    async saveUser(payload: User, isEdit: boolean) {
+    async saveUser(payload: UserPayload, isEdit: boolean): Promise<void> {
       this.saving = true;
       try {
         const config = this.getAuthConfig();
+        const formData = new FormData();
+
+        // Type-safe iteration over the payload
+        (Object.keys(payload) as Array<keyof UserPayload>).forEach((key) => {
+          const value = payload[key];
+
+          if (value === null || value === undefined) return;
+
+          if (typeof value === 'boolean') {
+            formData.append(key, value ? '1' : '0');
+          } else if (value instanceof File) {
+            formData.append(key, value);
+          } else {
+            formData.append(key, String(value));
+          }
+        });
+
         if (isEdit && payload.id) {
-          await axios.put(`http://localhost/api/user/${payload.id}`, payload, config);
+          formData.append('_method', 'PUT');
+          await axios.post(`http://localhost/api/user/${payload.id}`, formData, config);
         } else {
-          await axios.post('http://localhost/api/user', payload, config);
+          await axios.post('http://localhost/api/user', formData, config);
         }
+      } catch (error) {
+        console.error("Store: Error saving user", error);
+        throw error;
       } finally {
         this.saving = false;
       }
     },
 
-    async deleteUser(id: number) {
+    async deleteUser(id: number): Promise<void> {
       try {
         await axios.delete(`http://localhost/api/user/${id}`, this.getAuthConfig());
       } catch (error) {

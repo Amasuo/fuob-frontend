@@ -43,8 +43,19 @@
           >
             <template #[`item.firstname`]="{ item }">
               <div class="d-flex align-center py-2">
-                <v-avatar size="32" color="orange-lighten-4" class="mr-3">
-                  <span class="text-caption font-weight-bold text-orange-darken-4">
+                <v-avatar
+                  size="40"
+                  :color="item.profile_image ? 'transparent' : 'orange-lighten-4'"
+                  :class="{ 'border-avatar': item.profile_image }"
+                  class="mr-3"
+                >
+                  <v-img
+                    v-if="item.profile_image"
+                    :src="item.profile_image"
+                    alt="avatar"
+                    cover
+                  ></v-img>
+                  <span v-else class="text-caption font-weight-bold text-orange-darken-4">
                     {{ item.firstname[0] }}{{ item.lastname[0] }}
                   </span>
                 </v-avatar>
@@ -104,12 +115,46 @@
 
     <v-dialog v-model="dialog" max-width="800px" persistent>
       <v-card class="rounded-lg pa-4">
-        <v-card-title class="font-weight-bold"
-        >{{ isEdit ? 'Edit User' : 'New User' }}
+        <v-card-title class="font-weight-bold">
+          {{ isEdit ? 'Edit User' : 'New User' }}
         </v-card-title>
         <v-card-text>
           <v-form ref="formRef">
             <v-row dense>
+              <v-col cols="12" class="d-flex justify-center mb-6">
+                <div class="text-center">
+                  <v-hover v-slot="{ isHovering, props }">
+                    <v-avatar
+                      size="100"
+                      color="grey-lighten-4"
+                      class="position-relative cursor-pointer border-avatar"
+                      v-bind="props"
+                      @click="triggerFileInput"
+                    >
+                      <v-img v-if="imagePreview" :src="imagePreview" cover></v-img>
+                      <v-icon v-else size="40" color="grey">mdi-camera</v-icon>
+
+                      <v-overlay
+                        :model-value="isHovering"
+                        contained
+                        scrim="black"
+                        class="align-center justify-center"
+                      >
+                        <v-icon color="white">mdi-upload</v-icon>
+                      </v-overlay>
+                    </v-avatar>
+                  </v-hover>
+                  <input
+                    type="file"
+                    ref="fileInput"
+                    class="d-none"
+                    accept="image/*"
+                    @change="onFileSelected"
+                  />
+                  <div class="text-caption mt-2 text-grey">Click to upload photo</div>
+                </div>
+              </v-col>
+
               <v-col cols="12" sm="6">
                 <v-text-field
                   v-model="editedItem.firstname"
@@ -224,19 +269,22 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useRoleStore } from '@/stores/role'
+import { useAuthStore } from '@/stores/auth'
 import type { User } from '@/types/user'
 
 const userStore = useUserStore()
 const roleStore = useRoleStore()
 
 const formRef = ref<{ validate: () => Promise<{ valid: boolean }> } | null>(null)
+const fileInput = ref<HTMLInputElement | null>(null)
 const dialog = ref(false)
 const isEdit = ref(false)
 const showPassword = ref(false)
+const imagePreview = ref<string | null>(null)
+const selectedFile = ref<File | null>(null)
 
 const searchQuery = ref('')
 const search = ref('')
-
 const itemsPerPage = ref(10)
 const currentPage = ref(1)
 let searchTimeout: ReturnType<typeof setTimeout> | null = null
@@ -249,7 +297,7 @@ const headers = [
   { title: 'Actions', key: 'actions', sortable: false, align: 'end' as const },
 ]
 
-const editedItem = reactive<User & { password?: string }>({
+const editedItem = reactive<User & { password?: string; profile_image?: string }>({
   id: null,
   firstname: '',
   lastname: '',
@@ -265,6 +313,7 @@ const editedItem = reactive<User & { password?: string }>({
   is_validator: false,
   is_employee: true,
   is_simple: false,
+  profile_image: '',
 })
 
 const currentRole = ref('employee')
@@ -273,13 +322,26 @@ onMounted(() => {
   roleStore.fetchRoles()
 })
 
+const triggerFileInput = () => fileInput.value?.click()
+
+const onFileSelected = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    selectedFile.value = target.files[0]
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      imagePreview.value = e.target?.result as string
+    }
+    reader.readAsDataURL(target.files[0])
+  }
+}
+
 const formatRoleName = (name: string) => {
   if (!name) return ''
   const clean = name.toLowerCase()
   return clean === 'hr' ? 'HR' : clean.charAt(0).toUpperCase() + clean.slice(1)
 }
 
-// Helper to find the icon from the roleStore
 const getRoleIcon = (roleName: string) => {
   const role = roleStore.roles.find((r) => r.name.toLowerCase() === roleName.toLowerCase())
   return role?.icon || 'mdi-account-outline'
@@ -304,7 +366,6 @@ const getUserRole = (u: User) => {
 const loadItems = (options: { page: number; itemsPerPage: number; search?: string }) => {
   currentPage.value = options.page
   itemsPerPage.value = options.itemsPerPage
-
   userStore.fetchUsers({
     page: options.page,
     per_page: options.itemsPerPage,
@@ -314,7 +375,6 @@ const loadItems = (options: { page: number; itemsPerPage: number; search?: strin
 
 const onSearchInput = () => {
   if (searchTimeout) clearTimeout(searchTimeout)
-
   searchTimeout = setTimeout(() => {
     search.value = searchQuery.value
     currentPage.value = 1
@@ -324,22 +384,13 @@ const onSearchInput = () => {
 const openAddModal = () => {
   isEdit.value = false
   showPassword.value = false
+  imagePreview.value = null
+  selectedFile.value = null
   Object.assign(editedItem, {
-    id: null,
-    firstname: '',
-    lastname: '',
-    email: '',
-    password: '',
-    is_active: true,
-    employee_number: '',
-    hire_date: '',
-    birth_date: '',
-    cycle_start_date: '',
-    is_admin: false,
-    is_hr: false,
-    is_validator: false,
-    is_employee: true,
-    is_simple: false,
+    id: null, firstname: '', lastname: '', email: '', password: '',
+    is_active: true, employee_number: '', hire_date: '', birth_date: '',
+    cycle_start_date: '', is_admin: false, is_hr: false,
+    is_validator: false, is_employee: true, is_simple: false, profile_image: ''
   })
   currentRole.value = 'employee'
   dialog.value = true
@@ -348,6 +399,8 @@ const openAddModal = () => {
 const editUser = (item: User) => {
   isEdit.value = true
   currentRole.value = getUserRole(item)
+  imagePreview.value = item.profile_image || null
+  selectedFile.value = null
   Object.assign(editedItem, {
     ...item,
     password: '',
@@ -363,6 +416,8 @@ const handleSave = async () => {
   const { valid } = await formRef.value.validate()
   if (!valid) return
 
+  const authStore = useAuthStore()
+
   const roleName = currentRole.value.toLowerCase()
   const payload = {
     ...editedItem,
@@ -373,14 +428,30 @@ const handleSave = async () => {
     is_simple: roleName === 'simple',
   }
 
+  // Handle image upload if a file was selected
+  if (selectedFile.value) {
+    (payload as any).image_file = selectedFile.value
+  }
+
+  // Remove password from payload if not provided during edit
   if (isEdit.value && !payload.password) delete payload.password
 
+  // 1. Perform the save operation
   await userStore.saveUser(payload as any, isEdit.value)
+
+  // 2. If the user being edited is the current user, refresh the global auth state
+  // This triggers a request to /api/user/current to get fresh profile data
+  if (authStore.user && authStore.user.id === editedItem.id) {
+    await authStore.getCurrentUser()
+  }
+
+  // 3. Refresh the users table to show the latest data
   await userStore.fetchUsers({
     search: search.value,
     page: currentPage.value,
     per_page: itemsPerPage.value,
   })
+
   dialog.value = false
 }
 
@@ -399,5 +470,9 @@ const confirmDelete = async (item: User) => {
 <style scoped>
 .cursor-pointer :deep(tbody tr) {
   cursor: pointer;
+}
+/* Updated border style for the avatars */
+.border-avatar {
+  border: 1px solid #e0e0e0 !important;
 }
 </style>

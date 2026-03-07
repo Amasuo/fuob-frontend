@@ -102,17 +102,42 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async updateAccount(form: Partial<User>): Promise<boolean> {
-      if (!this.bearerToken) return false
+    // Inside stores/auth.ts
+
+    async updatePassword(passwordData: { current_password: string; new_password: string; new_password_confirmation: string }) {
       try {
-        const res = await axios.patch('/api/account', form, this.getAuthConfig())
-        this.setUser(res.data.data)
-        showSuccessToast(res.data.message || 'Account updated')
-        return true
-      } catch (error: unknown) {
-        const err = error as AxiosError<{ message: string }>
-        showErrorToast(err.response?.data?.message || 'Update failed')
-        return false
+        const response = await axios.put('/api/profile/password', passwordData, this.getAuthConfig());
+
+        showSuccessToast(response.data.message || 'Password updated successfully!');
+        return { success: true };
+      } catch (error: any) {
+        // Check if Laravel returned a validation error object
+        const errors = error.response?.data?.errors;
+        const message = error.response?.data?.message;
+
+        if (errors) {
+          // Get the first error message from the first field (e.g., "The new password field...")
+          const firstField = Object.keys(errors)[0];
+          showErrorToast(errors[firstField][0]);
+        } else {
+          // Fallback for general errors (e.g., 401, 500)
+          showErrorToast(message || 'Failed to update password.');
+        }
+
+        return { success: false };
+      }
+    },
+
+    async updateProfileImage(file: File) {
+      const formData = new FormData();
+      formData.append('image_file', file);
+      formData.append('_method', 'PUT');
+
+      const response = await axios.post('/api/profile/image', formData, this.getAuthConfig());
+
+      if (this.user) {
+        // Based on your JSON, the image is inside the 'data' object
+        this.user.profile_image = response.data.data.profile_image;
       }
     },
   },
