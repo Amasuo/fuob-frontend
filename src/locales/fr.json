@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "Système de gestion des congés",
-    "title_sidebar": "Gérer Congés",
+    "title_sidebar": "SITEX RH",
     "settings": "Paramètres du compte",
     "language": "Langue",
     "security": "Sécurité",
@@ -19,7 +19,7 @@
     "save_changes": "Enregistrer les modifications",
     "logout": "Déconnexion",
     "login": {
-      "title": "Simplifiez la gestion des congés",
+      "title": "SITEX RH",
       "subtitle": "Permettez à votre équipe de demander, suivre et approuver facilement les congés en quelques clics.",
       "welcome": "Bon retour !",
       "credentials_prompt": "Veuillez entrer vos identifiants pour accéder à votre tableau de bord",

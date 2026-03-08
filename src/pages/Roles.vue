@@ -30,7 +30,7 @@
                   class="font-weight-bold text-uppercase text-body-2"
                   style="letter-spacing: 0.5px"
                 >
-                  {{ formatRoleName(item.name) }}
+                  {{ item.display_name }}
                 </span>
               </div>
             </template>
@@ -52,20 +52,12 @@
                   class="font-weight-bold"
                 >
                   {{ perm.name.toUpperCase().replace(/-/g, ' ') }}
-
                   <v-tooltip activator="parent" location="top" open-delay="200" max-width="250">
                     <div class="text-caption">
                       {{ perm.description || $t('app.roles.no_permission_desc') }}
                     </div>
                   </v-tooltip>
                 </v-chip>
-
-                <span
-                  v-if="!item.permissions?.length"
-                  class="text-caption text-grey-lighten-1 italic"
-                >
-                  {{ $t('app.roles.no_permissions_assigned') }}
-                </span>
               </div>
             </template>
 
@@ -81,35 +73,24 @@
       </v-col>
     </v-row>
 
-    <v-dialog v-model="editDialog" max-width="600px" persistent>
+    <v-dialog v-model="editDialog" max-width="400px" persistent>
       <v-card class="pa-4 rounded-lg">
         <v-card-title class="font-weight-bold text-h5 mb-2">
-          {{ $t('app.roles.edit_role', { name: formatRoleName(roleForm.name) }) }}
+          {{ $t('app.roles.edit_role', { name: roleForm.display_name }) }}
         </v-card-title>
 
         <v-card-text>
           <v-row dense>
             <v-col cols="12">
-              <v-textarea
-                v-model="roleForm.description"
-                :label="$t('app.roles.access_description')"
-                variant="outlined"
-                rows="3"
-                auto-grow
-                prepend-inner-icon="mdi-text-subject"
-                class="mb-4"
-                hide-details
-              ></v-textarea>
-            </v-col>
-
-            <v-col cols="12">
-              <p class="text-subtitle-2 mb-2 text-grey-darken-1">{{ $t('app.roles.select_icon') }}</p>
+              <p class="text-subtitle-2 mb-2 text-grey-darken-1">
+                {{ $t('app.roles.select_icon') }}
+              </p>
               <IconPicker v-model="roleForm.icon" />
             </v-col>
           </v-row>
         </v-card-text>
 
-        <v-card-actions>
+        <v-card-actions class="d-flex flex-nowrap pt-4">
           <v-spacer></v-spacer>
           <v-btn variant="text" @click="editDialog = false">{{ $t('app.cancel') }}</v-btn>
           <v-btn color="black" variant="flat" :loading="isSaving" @click="saveRole">
@@ -134,32 +115,29 @@ const isSaving = ref(false)
 
 const roleForm = reactive({
   id: null,
-  name: '',
+  display_name: '',
   icon: '',
-  description: '',
 })
 
 const translatedHeaders = computed(() => [
   { title: t('app.roles.headers.name'), key: 'name', width: '200px' },
-  { title: t('app.roles.headers.description'), key: 'description', width: '250px', sortable: false },
+  {
+    title: t('app.roles.headers.description'),
+    key: 'description',
+    width: '250px',
+    sortable: false,
+  },
   { title: t('app.roles.headers.permissions'), key: 'permissions', sortable: false },
   { title: t('app.roles.headers.actions'), key: 'actions', align: 'end' as const, sortable: false },
 ])
 
 onMounted(() => roleStore.fetchRoles())
 
-const formatRoleName = (name: string) => {
-  if (!name) return ''
-  const val = name.toLowerCase()
-  return val === 'hr' ? 'HR' : val.charAt(0).toUpperCase() + val.slice(1)
-}
-
 const openEditDialog = (item: any) => {
   Object.assign(roleForm, {
     id: item.id,
-    name: item.name,
+    display_name: item.display_name,
     icon: item.icon || 'mdi-account',
-    description: item.description || '',
   })
   editDialog.value = true
 }
@@ -169,11 +147,7 @@ const saveRole = async () => {
 
   isSaving.value = true
   try {
-    await roleStore.updateRole(roleForm.id, {
-      icon: roleForm.icon,
-      description: roleForm.description,
-    })
-
+    await roleStore.updateRole(roleForm.id, { icon: roleForm.icon })
     await roleStore.fetchRoles()
     editDialog.value = false
   } catch (error) {

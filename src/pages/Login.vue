@@ -118,15 +118,6 @@
               {{ $t('app.login.error_invalid') }}
             </v-alert>
           </v-form>
-
-          <div class="mt-10 text-center">
-            <p class="text-body-2">
-              {{ $t('app.login.new_user') }}
-              <a href="#" class="text-blue-darken-2 font-weight-bold text-decoration-none">{{
-                $t('app.login.request_access')
-              }}</a>
-            </p>
-          </div>
         </v-card>
       </v-col>
     </v-row>

@@ -5,8 +5,10 @@ import { useAuthStore } from './auth'
 export interface Role {
   id: number | null
   name: string
+  display_name: string
   icon?: string
   description?: string
+  permissions?: any[]
 }
 
 export const useRoleStore = defineStore('role', {
@@ -25,10 +27,9 @@ export const useRoleStore = defineStore('role', {
             Authorization: `Bearer ${authStore.token}`,
             Accept: 'application/json',
           },
-          params: { page: 1, search: '' },
         })
 
-        // Handling both paginated (data.data) and simple array responses
+        // Handles standard Laravel Resource collection responses
         this.roles = response.data.data || response.data
       } catch (error) {
         console.error('RoleStore: Error fetching roles', error)
@@ -37,7 +38,7 @@ export const useRoleStore = defineStore('role', {
       }
     },
 
-    async updateRole(id: number, payload: { icon?: string; description?: string }) {
+    async updateRole(id: number, payload: { icon?: string }) {
       const authStore = useAuthStore()
       try {
         const response = await axios.patch(`http://localhost/api/role/${id}`, payload, {
@@ -47,16 +48,15 @@ export const useRoleStore = defineStore('role', {
           },
         })
 
-        // Update the local state so the UI reflects changes immediately without a full reload
         const index = this.roles.findIndex((r) => r.id === id)
         if (index !== -1) {
-          this.roles[index] = { ...this.roles[index], ...response.data.role }
+          this.roles[index] = { ...this.roles[index], ...response.data }
         }
 
         return response.data
       } catch (error) {
         console.error('RoleStore: Error updating role', error)
-        throw error // Throw so the component can handle the error (e.g., stop loading state)
+        throw error
       }
     },
   },
