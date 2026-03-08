@@ -164,5 +164,17 @@ export const useAuthStore = defineStore('auth', {
         return { success: false };
       }
     },
+
+    async resetPassword(payload: { email: string; token: string; password: string; password_confirmation: string }) {
+      try {
+        const response = await axios.post('/api/password/reset', payload)
+        showSuccessToast(response.data.message || 'Password has been reset successfully!')
+        return { success: true }
+      } catch (error: any) {
+        const message = error.response?.data?.message || 'Failed to reset password.'
+        showErrorToast(message)
+        return { success: false }
+      }
+    },
   },
 })
