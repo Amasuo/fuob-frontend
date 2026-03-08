@@ -34,7 +34,10 @@
       "action": "Connexion",
       "error_invalid": "E-mail ou mot de passe invalide.",
       "new_user": "Nouveau sur la plateforme ?",
-      "request_access": "Demander un accès"
+      "request_access": "Demander un accès",
+      "forgot_password_title": "Mot de passe oublié",
+      "forgot_password_instructions": "Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+      "send_link": "Envoyer le lien"
     },
     "sidebar": {
       "welcome": "Bienvenue",

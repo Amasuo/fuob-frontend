@@ -165,15 +165,25 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
+    async forgotPassword(email: string) {
+      try {
+        const response = await axios.post('/api/forgot-password', { email });
+        showSuccessToast(response.data.message || 'Reset link sent successfully!');
+        return { success: true };
+      } catch (error: any) {
+        showErrorToast(error.response?.data?.message || 'Failed to send reset link.');
+        return { success: false };
+      }
+    },
+
     async resetPassword(payload: { email: string; token: string; password: string; password_confirmation: string }) {
       try {
-        const response = await axios.post('/api/password/reset', payload)
-        showSuccessToast(response.data.message || 'Password has been reset successfully!')
-        return { success: true }
+        const response = await axios.post('/api/reset-password', payload);
+        showSuccessToast(response.data.message || 'Password reset successfully!');
+        return { success: true };
       } catch (error: any) {
-        const message = error.response?.data?.message || 'Failed to reset password.'
-        showErrorToast(message)
-        return { success: false }
+        showErrorToast(error.response?.data?.message || 'Failed to reset password.');
+        return { success: false };
       }
     },
   },

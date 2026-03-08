@@ -34,7 +34,10 @@
       "action": "Login",
       "error_invalid": "Invalid email or password.",
       "new_user": "New to the platform?",
-      "request_access": "Request Access"
+      "request_access": "Request Access",
+      "forgot_password_title": "Forgot Password",
+      "forgot_password_instructions": "Enter your email address, and we will send you a link to reset your password.",
+      "send_link": "Send Link"
     },
     "sidebar": {
       "welcome": "Welcome",

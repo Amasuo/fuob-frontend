@@ -15,7 +15,7 @@ const routes = setupLayouts([
   },
 ])
 
-const publicPages = ['/login', '/forbidden']
+const publicPages = ['/login', '/forbidden', '/resetpassword']
 
 export const adminPages = [
   'users',

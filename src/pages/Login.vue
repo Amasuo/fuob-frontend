@@ -88,6 +88,7 @@
               ></v-checkbox>
               <a
                 href="#"
+                @click.prevent="forgotDialogRef?.open()"
                 class="text-caption text-decoration-none text-grey-darken-2 font-weight-medium"
               >
                 {{ $t('app.login.forgot_password') }}
@@ -122,13 +123,18 @@
       </v-col>
     </v-row>
   </v-container>
+
+  <ForgotPasswordDialog ref="forgotDialogRef" />
 </template>
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import ForgotPasswordDialog from '@/components/ForgotPasswordDialog.vue'
 
 const authStore = useAuthStore()
+const forgotDialogRef = ref<InstanceType<typeof ForgotPasswordDialog> | null>(null)
+
 const loading = ref(false)
 const isFormValid = ref(false)
 
@@ -141,7 +147,6 @@ const handleLogin = async () => {
   if (!isFormValid.value) return
   loading.value = true
   try {
-    // Calling the authStore action
     await authStore.login({ value: form })
   } finally {
     loading.value = false

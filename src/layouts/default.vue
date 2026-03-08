@@ -113,7 +113,7 @@ const menuItems = computed(() => {
       return name.includes('welcome')
     })
   } else {
-    let excluded = ['login', 'forbidden', 'settings']
+    let excluded = ['login', 'forbidden', 'settings', 'resetpassword']
     if (!isAdmin.value) excluded = excluded.concat(adminPages)
     if (!isHr.value) excluded = excluded.concat(hrPages)
     if (!isValidator.value) excluded = excluded.concat(validatorPages)
