@@ -17,10 +17,16 @@ export interface User {
   profile_image: string;
   language_id: number | null;
   language_code: string | null;
+  unit_id: number | null;
+  unit_name: string | null;
 }
 
 export interface UserPaginationParams {
   page?: number;
   search?: string;
   per_page?: number;
+  is_employee?: boolean;
+  is_validator?: boolean;
+  is_rh?: boolean;
+  is_admin?: boolean;
 }

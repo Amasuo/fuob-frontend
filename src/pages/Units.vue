@@ -111,6 +111,7 @@
               :label="$t('app.units.name')"
               variant="outlined"
               class="mb-4"
+              :rules="[(v) => !!v || $t('app.generic.required')]"
             ></v-text-field>
             <v-select
               v-model="editedItem.parent_id"
@@ -123,14 +124,17 @@
               class="mb-4"
             ></v-select>
 
-            <v-select
+            <v-autocomplete
               v-model="editedItem.validator_id"
-              :items="validatorUsers"
+              :items="userStore.users"
               item-title="fullname"
               item-value="id"
               :label="$t('app.units.validator')"
               variant="outlined"
+              :loading="userStore.loading"
               clearable
+              @focus="onValidatorFocus"
+              @update:search="onValidatorSearch"
             >
               <template #item="{ props, item }">
                 <v-list-item v-bind="props" :title="item.raw.fullname">
@@ -148,7 +152,7 @@
                   </template>
                 </v-list-item>
               </template>
-            </v-select>
+            </v-autocomplete>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -180,16 +184,14 @@ const itemsPerPage = ref(10)
 const currentPage = ref(1)
 const searchQuery = ref('')
 let searchTimeout: ReturnType<typeof setTimeout> | null = null
+let validatorSearchTimeout: ReturnType<typeof setTimeout> | null = null
+const hasLoadedValidators = ref(false)
 
 const editedItem = reactive({
   id: null as number | null,
   name: '',
   parent_id: null as number | null,
   validator_id: null as number | null,
-})
-
-const validatorUsers = computed(() => {
-  return userStore.users.filter((user) => user.is_validator === true)
 })
 
 const headers = computed(() => [
@@ -200,8 +202,25 @@ const headers = computed(() => [
 ])
 
 onMounted(() => {
-  userStore.fetchUsers({ page: 1, per_page: 100 })
+  unitStore.fetchUnits({ page: 1, per_page: 10 })
 })
+
+const onValidatorFocus = () => {
+  if (!hasLoadedValidators.value) {
+    userStore.fetchUsers({ page: 1, per_page: 10, search: '', is_validator: true })
+    hasLoadedValidators.value = true
+  }
+}
+
+const onValidatorSearch = (val: string) => {
+  if (val === null || val.length >= 2) {
+    if (validatorSearchTimeout) clearTimeout(validatorSearchTimeout)
+    validatorSearchTimeout = setTimeout(() => {
+      userStore.fetchUsers({ page: 1, per_page: 20, search: val || '', is_validator: true })
+      hasLoadedValidators.value = true
+    }, 600)
+  }
+}
 
 const loadItems = (options?: any) => {
   if (options) {
@@ -229,6 +248,9 @@ const openAddModal = () => {
   editedItem.name = ''
   editedItem.parent_id = null
   editedItem.validator_id = null
+  hasLoadedValidators.value = false
+  // Optionally fetch initial list of validators
+  userStore.fetchUsers({ page: 1, per_page: 10, search: '' })
   dialog.value = true
 }
 
@@ -238,6 +260,9 @@ const editUnit = (item: any) => {
   editedItem.name = item.name
   editedItem.parent_id = item.parent?.id || null
   editedItem.validator_id = item.validator?.id || null
+  hasLoadedValidators.value = false
+  // Fetch initial list of validators
+  userStore.fetchUsers({ page: 1, per_page: 10, search: '' })
   dialog.value = true
 }
 

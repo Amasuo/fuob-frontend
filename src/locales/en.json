@@ -88,6 +88,7 @@
       "password": "Password",
       "min_8": "Min 8 characters",
       "role": "Role",
+      "unit": "Unit",
       "employee_number": "Employee Number",
       "status_active": "Active",
       "status_inactive": "Inactive",
@@ -98,6 +99,7 @@
       "delete_confirm": "Delete {name}?",
       "table": {
         "user": "User",
+        "unit": "Unit",
         "id_number": "ID Number",
         "role": "Role",
         "status": "Status",

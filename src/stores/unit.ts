@@ -12,8 +12,8 @@ interface Unit {
 
 // Updated interface to include optional search string
 interface UnitPaginationParams {
-  page: number
-  per_page: number
+  page?: number
+  per_page?: number
   search?: string
 }
 
@@ -44,7 +44,6 @@ export const useUnitStore = defineStore('unit', {
           params: {
             page: params.page || 1,
             per_page: params.per_page || 10,
-            // Pass the search term to the API
             search: params.search || '',
           },
         })

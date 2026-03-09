@@ -4,9 +4,7 @@
       <v-col cols="12" class="d-flex align-center justify-space-between mb-4">
         <div>
           <h1 class="text-h4 font-weight-bold mb-1">{{ $t('app.users.title') }}</h1>
-          <p class="text-subtitle-1 text-grey-darken-1">
-            {{ $t('app.users.subtitle') }}
-          </p>
+          <p class="text-subtitle-1 text-grey-darken-1">{{ $t('app.users.subtitle') }}</p>
         </div>
         <div class="d-flex align-center" style="gap: 16px">
           <v-text-field
@@ -35,7 +33,6 @@
             :items="userStore.users"
             :items-length="userStore.totalItems"
             :loading="userStore.loading"
-            :search="search"
             hover
             class="bg-transparent cursor-pointer"
             @update:options="loadItems"
@@ -64,6 +61,12 @@
                   <div class="text-caption text-grey">{{ (item as User).email }}</div>
                 </div>
               </div>
+            </template>
+
+            <template #[`item.unit_name`]="{ item }">
+              <span class="text-body-2">{{
+                (item as User).unit_name || '-'
+              }}</span>
             </template>
 
             <template #[`item.role`]="{ item }">
@@ -137,7 +140,6 @@
                     >
                       <v-img v-if="imagePreview" :src="imagePreview" cover></v-img>
                       <v-icon v-else size="40" color="grey">mdi-camera</v-icon>
-
                       <v-overlay
                         :model-value="isHovering"
                         contained
@@ -212,25 +214,35 @@
                   </template>
                 </v-select>
               </v-col>
+              <v-col
+                v-if="currentRole === 'validator' || currentRole === 'employee'"
+                cols="12"
+                sm="4"
+              >
+                <v-autocomplete
+                  v-model="editedItem.unit_id"
+                  :items="unitStore.units"
+                  item-title="name"
+                  item-value="id"
+                  :label="$t('app.users.unit')"
+                  variant="outlined"
+                  :loading="unitStore.loading"
+                  clearable
+                  @update:search="onUnitSearch"
+                >
+                  <template #no-data>
+                    <v-list-item>
+                      <v-list-item-title>{{ $t('app.generic.no_data') }}</v-list-item-title>
+                    </v-list-item>
+                  </template>
+                </v-autocomplete>
+              </v-col>
               <v-col cols="12" sm="4">
                 <v-text-field
                   v-model="editedItem.employee_number"
                   :label="$t('app.users.employee_number')"
                   variant="outlined"
                 ></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="4" class="d-flex align-center px-4">
-                <v-switch
-                  v-model="editedItem.is_active"
-                  :label="
-                    editedItem.is_active
-                      ? $t('app.users.status_active')
-                      : $t('app.users.status_inactive')
-                  "
-                  color="green"
-                  inset
-                  hide-details
-                ></v-switch>
               </v-col>
               <v-col cols="12" sm="4">
                 <v-text-field
@@ -260,6 +272,19 @@
                   persistent-placeholder
                 ></v-text-field>
               </v-col>
+              <v-col cols="12" class="d-flex align-center px-4 mt-2">
+                <v-switch
+                  v-model="editedItem.is_active"
+                  :label="
+                    editedItem.is_active
+                      ? $t('app.users.status_active')
+                      : $t('app.users.status_inactive')
+                  "
+                  color="green"
+                  inset
+                  hide-details
+                ></v-switch>
+              </v-col>
             </v-row>
           </v-form>
         </v-card-text>
@@ -280,12 +305,14 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useRoleStore } from '@/stores/role'
 import { useAuthStore } from '@/stores/auth'
+import { useUnitStore } from '@/stores/unit'
 import { useI18n } from 'vue-i18n'
 import type { User } from '@/types/user'
 
 const { t } = useI18n()
 const userStore = useUserStore()
 const roleStore = useRoleStore()
+const unitStore = useUnitStore()
 
 const formRef = ref<{ validate: () => Promise<{ valid: boolean }> } | null>(null)
 const fileInput = ref<HTMLInputElement | null>(null)
@@ -296,21 +323,27 @@ const imagePreview = ref<string | null>(null)
 const selectedFile = ref<File | null>(null)
 
 const searchQuery = ref('')
-const search = ref('')
 const itemsPerPage = ref(10)
 const currentPage = ref(1)
 let searchTimeout: ReturnType<typeof setTimeout> | null = null
+let unitSearchTimeout: ReturnType<typeof setTimeout> | null = null
 
-// Reactive headers to allow language switching
 const headers = computed(() => [
   { title: t('app.users.table.user'), key: 'name' },
+  { title: t('app.users.table.unit'), key: 'unit_name' },
   { title: t('app.users.table.id_number'), key: 'employee_number' },
   { title: t('app.users.table.role'), key: 'role', sortable: false },
   { title: t('app.users.table.status'), key: 'is_active', align: 'center' as const },
   { title: t('app.users.table.actions'), key: 'actions', sortable: false, align: 'end' as const },
 ])
 
-const editedItem = reactive<User & { password?: string; profile_image?: string }>({
+const editedItem = reactive<
+  User & {
+    password?: string
+    profile_image?: string
+    unit_id?: number | null
+  }
+>({
   id: null,
   firstname: '',
   lastname: '',
@@ -327,13 +360,22 @@ const editedItem = reactive<User & { password?: string; profile_image?: string }
   is_employee: true,
   is_simple: false,
   profile_image: '',
+  unit_id: null,
 })
 
 const currentRole = ref('employee')
 
 onMounted(() => {
   roleStore.fetchRoles()
+  unitStore.fetchUnits({ page: 1, per_page: 10 })
 })
+
+const onUnitSearch = (val: string) => {
+  if (unitSearchTimeout) clearTimeout(unitSearchTimeout)
+  unitSearchTimeout = setTimeout(() => {
+    unitStore.fetchUnits({ page: 1, per_page: 10, search: val || '' })
+  }, 600)
+}
 
 const triggerFileInput = () => fileInput.value?.click()
 
@@ -376,21 +418,21 @@ const getUserRole = (u: User) => {
   return 'simple'
 }
 
-const loadItems = (options: { page: number; itemsPerPage: number; search?: string }) => {
+const loadItems = (options: { page: number; itemsPerPage: number }) => {
   currentPage.value = options.page
   itemsPerPage.value = options.itemsPerPage
   userStore.fetchUsers({
     page: options.page,
     per_page: options.itemsPerPage,
-    search: search.value,
+    search: searchQuery.value,
   })
 }
 
 const onSearchInput = () => {
   if (searchTimeout) clearTimeout(searchTimeout)
   searchTimeout = setTimeout(() => {
-    search.value = searchQuery.value
     currentPage.value = 1
+    loadItems({ page: 1, itemsPerPage: itemsPerPage.value })
   }, 600)
 }
 
@@ -416,6 +458,7 @@ const openAddModal = () => {
     is_employee: true,
     is_simple: false,
     profile_image: '',
+    unit_id: null,
   })
   currentRole.value = 'employee'
   dialog.value = true
@@ -432,6 +475,7 @@ const editUser = (item: User) => {
     hire_date: item.hire_date ? item.hire_date.split('T')[0] : '',
     birth_date: item.birth_date ? item.birth_date.split('T')[0] : '',
     cycle_start_date: item.cycle_start_date ? item.cycle_start_date.split('T')[0] : '',
+    unit_id: item.unit_id || null,
   })
   dialog.value = true
 }
@@ -440,9 +484,7 @@ const handleSave = async () => {
   if (!formRef.value) return
   const { valid } = await formRef.value.validate()
   if (!valid) return
-
   const authStore = useAuthStore()
-
   const roleName = currentRole.value.toLowerCase()
   const payload = {
     ...editedItem,
@@ -452,25 +494,15 @@ const handleSave = async () => {
     is_employee: roleName === 'employee',
     is_simple: roleName === 'simple',
   }
-
-  if (selectedFile.value) {
-    ;(payload as any).image_file = selectedFile.value
-  }
-
+  if (selectedFile.value) (payload as any).image_file = selectedFile.value
   if (isEdit.value && !payload.password) delete payload.password
-
   await userStore.saveUser(payload as any, isEdit.value)
-
-  if (authStore.user && authStore.user.id === editedItem.id) {
-    await authStore.getCurrentUser()
-  }
-
+  if (authStore.user && authStore.user.id === editedItem.id) await authStore.getCurrentUser()
   await userStore.fetchUsers({
-    search: search.value,
+    search: searchQuery.value,
     page: currentPage.value,
     per_page: itemsPerPage.value,
   })
-
   dialog.value = false
 }
 
@@ -481,7 +513,7 @@ const confirmDelete = async (item: User) => {
   ) {
     await userStore.deleteUser(item.id)
     await userStore.fetchUsers({
-      search: search.value,
+      search: searchQuery.value,
       page: currentPage.value,
       per_page: itemsPerPage.value,
     })

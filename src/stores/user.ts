@@ -7,6 +7,7 @@ import { showErrorToast, showSuccessToast } from '@/plugins/toast'
 interface UserPayload extends Partial<User> {
   password?: string;
   image_file?: File | null;
+  unit_id?: number | null;
   is_admin: boolean;
   is_hr: boolean;
   is_validator: boolean;
@@ -41,8 +42,12 @@ export const useUserStore = defineStore('user', {
           ...this.getAuthConfig(),
           params: {
             page: params.page || 1,
+            per_page: params.per_page || 10,
             search: params.search || '',
-            per_page: params.per_page || 10
+            is_employee: params.is_employee || '',
+            is_validator: params.is_validator || '',
+            is_rh: params.is_rh || '',
+            is_admin: params.is_admin || '',
           }
         });
         this.users = response.data.data;

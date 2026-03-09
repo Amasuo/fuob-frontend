@@ -88,6 +88,7 @@
       "password": "Mot de passe",
       "min_8": "Min 8 caractères",
       "role": "Rôle",
+      "unit": "Unité",
       "employee_number": "Matricule",
       "status_active": "Actif",
       "status_inactive": "Inactif",
@@ -98,6 +99,7 @@
       "delete_confirm": "Supprimer {name} ?",
       "table": {
         "user": "Utilisateur",
+        "unit": "Unité",
         "id_number": "Matricule",
         "role": "Rôle",
         "status": "Statut",
