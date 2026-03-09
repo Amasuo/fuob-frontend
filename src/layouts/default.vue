@@ -147,8 +147,9 @@ const getIcon = (name: string) => {
   const icons: Record<string, string> = {
     welcome: 'mdi-view-dashboard-outline',
     users: 'mdi-account-group-outline',
-    roles: 'mdi-file-document-outline',
+    roles: 'mdi-shield-key-outline',
     languages: 'mdi-translate',
+    units: 'mdi-domain',
   }
   return icons[name.toLowerCase()] || 'mdi-file-outline'
 }

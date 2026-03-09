@@ -89,8 +89,8 @@
       "min_8": "Min 8 caractères",
       "role": "Rôle",
       "employee_number": "Matricule",
-      "status_active": "Statut : Actif",
-      "status_inactive": "Statut : Inactif",
+      "status_active": "Actif",
+      "status_inactive": "Inactif",
       "birth_date": "Date de naissance",
       "hire_date": "Date d'embauche",
       "cycle_start_date": "Date de début de cycle",
@@ -101,6 +101,25 @@
         "id_number": "Matricule",
         "role": "Rôle",
         "status": "Statut",
+        "actions": "Actions"
+      }
+    },
+    "units": {
+      "title": "Gestion des unités",
+      "subtitle": "Gérez votre hiérarchie organisationnelle et les validateurs.",
+      "search_placeholder": "Rechercher des unités...",
+      "add_unit": "Ajouter unité",
+      "edit_unit": "Modifier l'unité",
+      "new_unit": "Nouvelle unité",
+      "name": "Nom de l'unité",
+      "parent": "Unité parente",
+      "validator": "Validateur",
+      "no_validator": "Aucun",
+      "delete_confirm": "Supprimer l'unité {name} ?",
+      "table": {
+        "name": "Nom de l'unité",
+        "parent": "Unité parente",
+        "validator": "Validateur",
         "actions": "Actions"
       }
     },

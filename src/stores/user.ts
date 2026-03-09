@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import axios, { type AxiosRequestConfig } from 'axios';
 import { useAuthStore } from './auth';
 import type { User, UserPaginationParams } from '@/types/user';
+import { showErrorToast, showSuccessToast } from '@/plugins/toast'
 
 interface UserPayload extends Partial<User> {
   password?: string;
@@ -46,8 +47,8 @@ export const useUserStore = defineStore('user', {
         });
         this.users = response.data.data;
         this.totalItems = response.data.meta.total;
-      } catch (error) {
-        console.error("Store: Error fetching users", error);
+      } catch (error: any) {
+        showErrorToast(error.response?.data?.message || 'Failed to fetch users.');
         throw error;
       } finally {
         this.loading = false;
@@ -74,15 +75,16 @@ export const useUserStore = defineStore('user', {
             formData.append(key, String(value));
           }
         });
-
+        let response;
         if (isEdit && payload.id) {
           formData.append('_method', 'PUT');
-          await axios.post(`http://localhost/api/user/${payload.id}`, formData, config);
+          response = await axios.post(`http://localhost/api/user/${payload.id}`, formData, config);
         } else {
-          await axios.post('http://localhost/api/user', formData, config);
+          response = await axios.post('http://localhost/api/user', formData, config);
         }
-      } catch (error) {
-        console.error("Store: Error saving user", error);
+        showSuccessToast(response.data.message || 'User saved successfully!');
+      } catch (error: any) {
+        showErrorToast(error.response?.data?.message || 'Failed to save user.');
         throw error;
       } finally {
         this.saving = false;
@@ -91,9 +93,10 @@ export const useUserStore = defineStore('user', {
 
     async deleteUser(id: number): Promise<void> {
       try {
-        await axios.delete(`http://localhost/api/user/${id}`, this.getAuthConfig());
-      } catch (error) {
-        console.error("Store: Error deleting user", error);
+        const response = await axios.delete(`http://localhost/api/user/${id}`, this.getAuthConfig());
+        showSuccessToast(response.data.message || 'User deleted successfully!');
+      } catch (error: any) {
+        showErrorToast(error.response?.data?.message || 'Failed to delete user.');
         throw error;
       }
     }

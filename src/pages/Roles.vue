@@ -17,9 +17,7 @@
             :items="roleStore.roles"
             :loading="roleStore.loading"
             hover
-            hide-default-footer
-            class="bg-transparent cursor-pointer"
-            @click:row="(_e, { item }) => openEditDialog(item)"
+            class="bg-transparent"
           >
             <template #[`item.name`]="{ item }">
               <div class="d-flex align-center py-3">
@@ -60,64 +58,20 @@
                 </v-chip>
               </div>
             </template>
-
-            <template #[`item.actions`]="{ item }">
-              <div class="d-flex justify-end">
-                <v-btn icon variant="text" size="small" @click.stop="openEditDialog(item)">
-                  <v-icon color="blue-darken-2">mdi-pencil-outline</v-icon>
-                </v-btn>
-              </div>
-            </template>
           </v-data-table>
         </v-card>
       </v-col>
     </v-row>
-
-    <v-dialog v-model="editDialog" max-width="400px" persistent>
-      <v-card class="pa-4 rounded-lg">
-        <v-card-title class="font-weight-bold text-h5 mb-2">
-          {{ $t('app.roles.edit_role', { name: roleForm.display_name }) }}
-        </v-card-title>
-
-        <v-card-text>
-          <v-row dense>
-            <v-col cols="12">
-              <p class="text-subtitle-2 mb-2 text-grey-darken-1">
-                {{ $t('app.roles.select_icon') }}
-              </p>
-              <IconPicker v-model="roleForm.icon" />
-            </v-col>
-          </v-row>
-        </v-card-text>
-
-        <v-card-actions class="d-flex flex-nowrap pt-4">
-          <v-spacer></v-spacer>
-          <v-btn variant="text" @click="editDialog = false">{{ $t('app.cancel') }}</v-btn>
-          <v-btn color="black" variant="flat" :loading="isSaving" @click="saveRole">
-            {{ $t('app.save_changes') }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoleStore } from '@/stores/role'
-import IconPicker from '@/components/IconPicker.vue'
 
 const { t } = useI18n()
 const roleStore = useRoleStore()
-const editDialog = ref(false)
-const isSaving = ref(false)
-
-const roleForm = reactive({
-  id: null,
-  display_name: '',
-  icon: '',
-})
 
 const translatedHeaders = computed(() => [
   { title: t('app.roles.headers.name'), key: 'name', width: '200px' },
@@ -128,38 +82,9 @@ const translatedHeaders = computed(() => [
     sortable: false,
   },
   { title: t('app.roles.headers.permissions'), key: 'permissions', sortable: false },
-  { title: t('app.roles.headers.actions'), key: 'actions', align: 'end' as const, sortable: false },
 ])
 
-onMounted(() => roleStore.fetchRoles())
-
-const openEditDialog = (item: any) => {
-  Object.assign(roleForm, {
-    id: item.id,
-    display_name: item.display_name,
-    icon: item.icon || 'mdi-account',
-  })
-  editDialog.value = true
-}
-
-const saveRole = async () => {
-  if (!roleForm.id) return
-
-  isSaving.value = true
-  try {
-    await roleStore.updateRole(roleForm.id, { icon: roleForm.icon })
-    await roleStore.fetchRoles()
-    editDialog.value = false
-  } catch (error) {
-    console.error('Update failed:', error)
-  } finally {
-    isSaving.value = false
-  }
-}
+onMounted(() => {
+  roleStore.fetchRoles()
+})
 </script>
-
-<style scoped>
-.cursor-pointer :deep(tbody tr) {
-  cursor: pointer;
-}
-</style>

@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "Leave Management System",
-    "title_sidebar": "Manage Leaves",
+    "title_sidebar": "SITEX RH",
     "settings": "Account Settings",
     "language": "Language",
     "security": "Security",
@@ -89,8 +89,8 @@
       "min_8": "Min 8 characters",
       "role": "Role",
       "employee_number": "Employee Number",
-      "status_active": "Status: Active",
-      "status_inactive": "Status: Inactive",
+      "status_active": "Active",
+      "status_inactive": "Inactive",
       "birth_date": "Birth Date",
       "hire_date": "Hire Date",
       "cycle_start_date": "Cycle Start Date",
@@ -101,6 +101,25 @@
         "id_number": "ID Number",
         "role": "Role",
         "status": "Status",
+        "actions": "Actions"
+      }
+    },
+    "units": {
+      "title": "Unit Management",
+      "subtitle": "Manage your organizational hierarchy and validators.",
+      "search_placeholder": "Search units...",
+      "add_unit": "Add Unit",
+      "edit_unit": "Edit Unit",
+      "new_unit": "New Unit",
+      "name": "Unit Name",
+      "parent": "Parent Unit",
+      "validator": "Validator",
+      "no_validator": "None",
+      "delete_confirm": "Delete unit {name}?",
+      "table": {
+        "name": "Unit Name",
+        "parent": "Parent Unit",
+        "validator": "Validator",
         "actions": "Actions"
       }
     },

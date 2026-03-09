@@ -21,6 +21,7 @@ export const adminPages = [
   'users',
   'roles',
   'languages',
+  'units',
 ]
 
 export const validatorPages = []

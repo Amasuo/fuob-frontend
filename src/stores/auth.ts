@@ -134,6 +134,7 @@ export const useAuthStore = defineStore('auth', {
       formData.append('_method', 'PUT');
 
       const response = await axios.post('/api/profile/image', formData, this.getAuthConfig());
+      showSuccessToast(response.data.message || 'Image updated successfully!');
 
       if (this.user) {
         // Based on your JSON, the image is inside the 'data' object
