@@ -228,6 +228,7 @@
                   variant="outlined"
                   :loading="unitStore.loading"
                   clearable
+                  @focus="onUnitFocus"
                   @update:search="onUnitSearch"
                 >
                   <template #no-data>
@@ -328,6 +329,8 @@ const currentPage = ref(1)
 let searchTimeout: ReturnType<typeof setTimeout> | null = null
 let unitSearchTimeout: ReturnType<typeof setTimeout> | null = null
 
+const hasLoadedUnits = ref(false)
+
 const headers = computed(() => [
   { title: t('app.users.table.user'), key: 'name' },
   { title: t('app.users.table.unit'), key: 'unit_name' },
@@ -360,7 +363,10 @@ const editedItem = reactive<
   is_employee: true,
   is_simple: false,
   profile_image: '',
+  language_id: null,
+  language_code: '',
   unit_id: null,
+  unit_name: '',
 })
 
 const currentRole = ref('employee')
@@ -370,11 +376,23 @@ onMounted(() => {
   unitStore.fetchUnits({ page: 1, per_page: 10 })
 })
 
+const onUnitFocus = () => {
+  if (hasLoadedUnits.value) return;
+  if (!hasLoadedUnits.value) {
+    unitStore.fetchUnits({ page: 1, per_page: 10, search: '' })
+    hasLoadedUnits.value = true
+  }
+}
+
 const onUnitSearch = (val: string) => {
-  if (unitSearchTimeout) clearTimeout(unitSearchTimeout)
+  if ((val === '' || val === null) && hasLoadedUnits.value) return;
+
+  if (unitSearchTimeout) clearTimeout(unitSearchTimeout);
+
   unitSearchTimeout = setTimeout(() => {
-    unitStore.fetchUnits({ page: 1, per_page: 10, search: val || '' })
-  }, 600)
+    unitStore.fetchUnits({ page: 1, per_page: 10, search: val || '' });
+    hasLoadedUnits.value = true;
+  }, 600);
 }
 
 const triggerFileInput = () => fileInput.value?.click()
@@ -438,6 +456,7 @@ const onSearchInput = () => {
 
 const openAddModal = () => {
   isEdit.value = false
+  hasLoadedUnits.value = false
   showPassword.value = false
   imagePreview.value = null
   selectedFile.value = null
@@ -466,6 +485,7 @@ const openAddModal = () => {
 
 const editUser = (item: User) => {
   isEdit.value = true
+  hasLoadedUnits.value = false
   currentRole.value = getUserRole(item)
   imagePreview.value = item.profile_image || null
   selectedFile.value = null
