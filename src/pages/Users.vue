@@ -377,22 +377,30 @@ onMounted(() => {
 })
 
 const onUnitFocus = () => {
-  if (hasLoadedUnits.value) return;
   if (!hasLoadedUnits.value) {
     unitStore.fetchUnits({ page: 1, per_page: 10, search: '' })
     hasLoadedUnits.value = true
   }
 }
 
+const onValidatorSearch = (val: string) => {
+  if (val === null || val.length >= 2) {
+    if (validatorSearchTimeout) clearTimeout(validatorSearchTimeout)
+    validatorSearchTimeout = setTimeout(() => {
+      userStore.fetchUsers({ page: 1, per_page: 20, search: val || '', is_validator: true })
+      hasLoadedValidators.value = true
+    }, 600)
+  }
+}
 const onUnitSearch = (val: string) => {
-  if ((val === '' || val === null) && hasLoadedUnits.value) return;
 
-  if (unitSearchTimeout) clearTimeout(unitSearchTimeout);
-
-  unitSearchTimeout = setTimeout(() => {
-    unitStore.fetchUnits({ page: 1, per_page: 10, search: val || '' });
-    hasLoadedUnits.value = true;
-  }, 600);
+  if (val === null || val.length >= 2) {
+    if (unitSearchTimeout) clearTimeout(unitSearchTimeout)
+    unitSearchTimeout = setTimeout(() => {
+      unitStore.fetchUnits({ page: 1, per_page: 20, search: val || '' })
+      hasLoadedUnits.value = true
+    }, 600)
+  }
 }
 
 const triggerFileInput = () => fileInput.value?.click()
