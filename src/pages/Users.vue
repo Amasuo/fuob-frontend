@@ -264,15 +264,6 @@
                   persistent-placeholder
                 ></v-text-field>
               </v-col>
-              <v-col cols="12" sm="4">
-                <v-text-field
-                  v-model="editedItem.cycle_start_date"
-                  :label="$t('app.users.cycle_start_date')"
-                  type="date"
-                  variant="outlined"
-                  persistent-placeholder
-                ></v-text-field>
-              </v-col>
               <v-col cols="12" class="d-flex align-center px-4 mt-2">
                 <v-switch
                   v-model="editedItem.is_active"
@@ -356,7 +347,6 @@ const editedItem = reactive<
   is_active: true,
   hire_date: '',
   birth_date: '',
-  cycle_start_date: '',
   is_admin: false,
   is_hr: false,
   is_validator: false,
@@ -478,7 +468,6 @@ const openAddModal = () => {
     employee_number: '',
     hire_date: '',
     birth_date: '',
-    cycle_start_date: '',
     is_admin: false,
     is_hr: false,
     is_validator: false,
@@ -502,7 +491,6 @@ const editUser = (item: User) => {
     password: '',
     hire_date: item.hire_date ? item.hire_date.split('T')[0] : '',
     birth_date: item.birth_date ? item.birth_date.split('T')[0] : '',
-    cycle_start_date: item.cycle_start_date ? item.cycle_start_date.split('T')[0] : '',
     unit_id: item.unit_id || null,
   })
   dialog.value = true

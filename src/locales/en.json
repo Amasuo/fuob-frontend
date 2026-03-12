@@ -43,7 +43,9 @@
       "welcome": "Welcome",
       "users": "Users",
       "roles": "Roles",
-      "languages": "Languages"
+      "languages": "Languages",
+      "units": "Units",
+      "workingcalendars": "Working Calendars"
     },
     "profile": {
       "image": {
@@ -94,7 +96,6 @@
       "status_inactive": "Inactive",
       "birth_date": "Birth Date",
       "hire_date": "Hire Date",
-      "cycle_start_date": "Cycle Start Date",
       "birth_date_error": "Birth date must be in the past",
       "delete_confirm": "Delete {name}?",
       "table": {
@@ -123,6 +124,36 @@
         "parent": "Parent Unit",
         "validator": "Validator",
         "actions": "Actions"
+      }
+    },
+    "working_calendars": {
+      "title": "Working Calendars",
+      "subtitle": "Manage rotating shift patterns and durations",
+      "search_placeholder": "Search calendars...",
+      "add_calendar": "Add Calendar",
+      "edit_calendar": "Edit Work Cycle",
+      "new_calendar": "New Work Cycle",
+      "name": "Calendar Name",
+      "duration": "Cycle Duration (Days)",
+      "start_date": "Cycle Start Date",
+      "description": "Description",
+      "active_status": "Active",
+      "active": "Active",
+      "inactive": "Inactive",
+      "delete_confirm": "Delete {name}?",
+      "headers": {
+        "name": "Name",
+        "duration": "Duration",
+        "start_date": "Start Date",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "grid": {
+        "day": "Day",
+        "working": "Working?",
+        "label": "Label",
+        "start": "Start",
+        "end": "End"
       }
     },
     "generic": {

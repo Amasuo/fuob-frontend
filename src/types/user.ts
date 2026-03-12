@@ -7,7 +7,6 @@ export interface User {
   employee_number: string;
   is_active: boolean;
   hire_date: string;
-  cycle_start_date: string;
   birth_date: string;
   is_admin: boolean;
   is_hr: boolean;

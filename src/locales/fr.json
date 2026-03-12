@@ -43,7 +43,9 @@
       "welcome": "Bienvenue",
       "users": "Utilisateurs",
       "roles": "Rôles",
-      "languages": "Langues"
+      "languages": "Langues",
+      "units": "Unités",
+      "workingcalendars": "Calendriers de travail"
     },
     "profile": {
       "image": {
@@ -94,7 +96,6 @@
       "status_inactive": "Inactif",
       "birth_date": "Date de naissance",
       "hire_date": "Date d'embauche",
-      "cycle_start_date": "Date de début de cycle",
       "birth_date_error": "La date de naissance doit être dans le passé",
       "delete_confirm": "Supprimer {name} ?",
       "table": {
@@ -123,6 +124,36 @@
         "parent": "Unité parente",
         "validator": "Validateur",
         "actions": "Actions"
+      }
+    },
+    "working_calendars": {
+      "title": "Calendriers de travail",
+      "subtitle": "Gérez les modèles de roulement et les durées",
+      "search_placeholder": "Rechercher des calendriers...",
+      "add_calendar": "Ajouter un calendrier",
+      "edit_calendar": "Modifier le cycle de travail",
+      "new_calendar": "Nouveau cycle de travail",
+      "name": "Nom du calendrier",
+      "duration": "Durée du cycle (Jours)",
+      "start_date": "Date de début du cycle",
+      "description": "Description",
+      "active_status": "Actif",
+      "active": "Actif",
+      "inactive": "Inactif",
+      "delete_confirm": "Supprimer {name} ?",
+      "headers": {
+        "name": "Nom",
+        "duration": "Durée",
+        "start_date": "Date de début",
+        "status": "Statut",
+        "actions": "Actions"
+      },
+      "grid": {
+        "day": "Jour",
+        "working": "Travail ?",
+        "label": "Libellé",
+        "start": "Début",
+        "end": "Fin"
       }
     },
     "generic": {

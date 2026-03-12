@@ -149,7 +149,7 @@ const getIcon = (name: string) => {
     roles: 'mdi-shield-key-outline',
     languages: 'mdi-translate',
     units: 'mdi-domain',
-    calendars: 'mdi-calendar-clock-outline',
+    workingcalendars: 'mdi-calendar-clock-outline',
   }
   return icons[name.toLowerCase()] || 'mdi-file-outline'
 }
