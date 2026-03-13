@@ -214,14 +214,11 @@
                   :label="$t('app.users.role')"
                   variant="outlined"
                   :loading="roleStore.loading"
+                  :disabled="isEdit && editedItem.is_admin"
                 ></v-select>
               </v-col>
 
-              <v-col
-                v-if="currentRole === 'validator' || currentRole === 'employee'"
-                cols="12"
-                sm="4"
-              >
+              <v-col v-if="currentRole !== 'admin'" cols="12" sm="4">
                 <v-autocomplete
                   v-model="editedItem.unit_id"
                   :items="unitStore.units"
@@ -249,33 +246,36 @@
                 ></v-autocomplete>
               </v-col>
 
-              <v-col cols="12" sm="4">
-                <v-text-field
-                  v-model="editedItem.employee_number"
-                  :label="$t('app.users.employee_number')"
-                  variant="outlined"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="4">
-                <v-text-field
-                  v-model="editedItem.birth_date"
-                  :label="$t('app.users.birth_date')"
-                  type="date"
-                  variant="outlined"
-                  persistent-placeholder
-                  :rules="[validateBirthDate]"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="4">
-                <v-text-field
-                  v-model="editedItem.hire_date"
-                  :label="$t('app.users.hire_date')"
-                  type="date"
-                  variant="outlined"
-                  persistent-placeholder
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" class="d-flex align-center px-4 mt-2">
+              <template v-if="currentRole !== 'admin'">
+                <v-col cols="12" sm="4">
+                  <v-text-field
+                    v-model="editedItem.employee_number"
+                    :label="$t('app.users.employee_number')"
+                    variant="outlined"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <v-text-field
+                    v-model="editedItem.birth_date"
+                    :label="$t('app.users.birth_date')"
+                    type="date"
+                    variant="outlined"
+                    persistent-placeholder
+                    :rules="[validateBirthDate]"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <v-text-field
+                    v-model="editedItem.hire_date"
+                    :label="$t('app.users.hire_date')"
+                    type="date"
+                    variant="outlined"
+                    persistent-placeholder
+                  ></v-text-field>
+                </v-col>
+              </template>
+
+              <v-col v-if="currentRole !== 'admin'" cols="12" class="d-flex align-center px-4 mt-2">
                 <v-switch
                   v-model="editedItem.is_active"
                   :label="
@@ -511,7 +511,14 @@ const handleSave = async () => {
     is_simple: roleName === 'simple',
   }
 
-  if (payload.is_admin) payload.working_calendar_id = null
+  if (payload.is_admin) {
+    payload.working_calendar_id = null
+    payload.unit_id = null
+    payload.employee_number = ''
+    payload.birth_date = ''
+    payload.hire_date = ''
+    payload.is_active = true // Ensure admins remain active
+  }
 
   if (selectedFile.value) (payload as any).image_file = selectedFile.value
   if (isEdit.value && !payload.password) delete payload.password
