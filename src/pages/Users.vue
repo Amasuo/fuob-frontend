@@ -56,17 +56,22 @@
                     {{ item.firstname[0] }}{{ item.lastname[0] }}
                   </span>
                 </v-avatar>
-                <div>
+                <div class="d-flex flex-column">
                   <div class="font-weight-bold">{{ (item as User).fullname }}</div>
                   <div class="text-caption text-grey">{{ (item as User).email }}</div>
+                  <div
+                    v-if="!(item as User).is_admin && (item as User).working_calendar_name"
+                    class="text-caption text-blue-darken-2 font-weight-medium mt-1"
+                  >
+                    <v-icon size="12" class="mr-1">mdi-calendar-clock</v-icon>
+                    {{ (item as User).working_calendar_name }}
+                  </div>
                 </div>
               </div>
             </template>
 
             <template #[`item.unit_name`]="{ item }">
-              <span class="text-body-2">{{
-                (item as User).unit_name || '-'
-              }}</span>
+              <span class="text-body-2">{{ (item as User).unit_name || '-' }}</span>
             </template>
 
             <template #[`item.role`]="{ item }">
@@ -120,7 +125,7 @@
       </v-col>
     </v-row>
 
-    <v-dialog v-model="dialog" max-width="800px" persistent>
+    <v-dialog v-model="dialog" max-width="850px" persistent>
       <v-card class="rounded-lg pa-4">
         <v-card-title class="font-weight-bold">
           {{ isEdit ? $t('app.users.edit_user') : $t('app.users.new_user') }}
@@ -199,6 +204,7 @@
                   ]"
                 ></v-text-field>
               </v-col>
+
               <v-col cols="12" sm="4">
                 <v-select
                   v-model="currentRole"
@@ -208,12 +214,9 @@
                   :label="$t('app.users.role')"
                   variant="outlined"
                   :loading="roleStore.loading"
-                >
-                  <template #item="{ props, item }">
-                    <v-list-item v-bind="props" :prepend-icon="item.raw.icon"></v-list-item>
-                  </template>
-                </v-select>
+                ></v-select>
               </v-col>
+
               <v-col
                 v-if="currentRole === 'validator' || currentRole === 'employee'"
                 cols="12"
@@ -228,16 +231,24 @@
                   variant="outlined"
                   :loading="unitStore.loading"
                   clearable
-                  @focus="onUnitFocus"
                   @update:search="onUnitSearch"
-                >
-                  <template #no-data>
-                    <v-list-item>
-                      <v-list-item-title>{{ $t('app.generic.no_data') }}</v-list-item-title>
-                    </v-list-item>
-                  </template>
-                </v-autocomplete>
+                ></v-autocomplete>
               </v-col>
+
+              <v-col v-if="currentRole !== 'admin'" cols="12" sm="4">
+                <v-autocomplete
+                  v-model="editedItem.working_calendar_id"
+                  :items="workingCalendarStore.calendars"
+                  item-title="name"
+                  item-value="id"
+                  :label="$t('app.sidebar.workingcalendars')"
+                  variant="outlined"
+                  :loading="workingCalendarStore.loading"
+                  clearable
+                  @update:search="onCalendarSearch"
+                ></v-autocomplete>
+              </v-col>
+
               <v-col cols="12" sm="4">
                 <v-text-field
                   v-model="editedItem.employee_number"
@@ -298,6 +309,7 @@ import { useUserStore } from '@/stores/user'
 import { useRoleStore } from '@/stores/role'
 import { useAuthStore } from '@/stores/auth'
 import { useUnitStore } from '@/stores/unit'
+import { useWorkingCalendarStore } from '@/stores/working-calendar'
 import { useI18n } from 'vue-i18n'
 import type { User } from '@/types/user'
 
@@ -305,8 +317,9 @@ const { t } = useI18n()
 const userStore = useUserStore()
 const roleStore = useRoleStore()
 const unitStore = useUnitStore()
+const workingCalendarStore = useWorkingCalendarStore()
 
-const formRef = ref<{ validate: () => Promise<{ valid: boolean }> } | null>(null)
+const formRef = ref<any>(null)
 const fileInput = ref<HTMLInputElement | null>(null)
 const dialog = ref(false)
 const isEdit = ref(false)
@@ -317,10 +330,7 @@ const selectedFile = ref<File | null>(null)
 const searchQuery = ref('')
 const itemsPerPage = ref(10)
 const currentPage = ref(1)
-let searchTimeout: ReturnType<typeof setTimeout> | null = null
-let unitSearchTimeout: ReturnType<typeof setTimeout> | null = null
-
-const hasLoadedUnits = ref(false)
+let searchTimeout: any = null
 
 const headers = computed(() => [
   { title: t('app.users.table.user'), key: 'name' },
@@ -336,6 +346,7 @@ const editedItem = reactive<
     password?: string
     profile_image?: string
     unit_id?: number | null
+    working_calendar_id?: number | null
   }
 >({
   id: null,
@@ -357,40 +368,30 @@ const editedItem = reactive<
   language_code: '',
   unit_id: null,
   unit_name: '',
+  working_calendar_id: null,
+  working_calendar_name: null,
 })
 
 const currentRole = ref('employee')
 
 onMounted(() => {
   roleStore.fetchRoles()
-  unitStore.fetchUnits({ page: 1, per_page: 10 })
+  unitStore.fetchUnits({ page: 1 })
+  workingCalendarStore.fetchCalendars({ page: 1 })
 })
 
-const onUnitFocus = () => {
-  if (!hasLoadedUnits.value) {
-    unitStore.fetchUnits({ page: 1, per_page: 10, search: '' })
-    hasLoadedUnits.value = true
-  }
-}
-
-const onValidatorSearch = (val: string) => {
-  if (val === null || val.length >= 2) {
-    if (validatorSearchTimeout) clearTimeout(validatorSearchTimeout)
-    validatorSearchTimeout = setTimeout(() => {
-      userStore.fetchUsers({ page: 1, per_page: 20, search: val || '', is_validator: true })
-      hasLoadedValidators.value = true
-    }, 600)
-  }
-}
 const onUnitSearch = (val: string) => {
+  if (searchTimeout) clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(() => {
+    unitStore.fetchUnits({ page: 1, search: val })
+  }, 400)
+}
 
-  if (val === null || val.length >= 2) {
-    if (unitSearchTimeout) clearTimeout(unitSearchTimeout)
-    unitSearchTimeout = setTimeout(() => {
-      unitStore.fetchUnits({ page: 1, per_page: 20, search: val || '' })
-      hasLoadedUnits.value = true
-    }, 600)
-  }
+const onCalendarSearch = (val: string) => {
+  if (searchTimeout) clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(() => {
+    workingCalendarStore.fetchCalendars({ page: 1, search: val })
+  }, 400)
 }
 
 const triggerFileInput = () => fileInput.value?.click()
@@ -454,7 +455,6 @@ const onSearchInput = () => {
 
 const openAddModal = () => {
   isEdit.value = false
-  hasLoadedUnits.value = false
   showPassword.value = false
   imagePreview.value = null
   selectedFile.value = null
@@ -475,6 +475,7 @@ const openAddModal = () => {
     is_simple: false,
     profile_image: '',
     unit_id: null,
+    working_calendar_id: null,
   })
   currentRole.value = 'employee'
   dialog.value = true
@@ -482,7 +483,6 @@ const openAddModal = () => {
 
 const editUser = (item: User) => {
   isEdit.value = true
-  hasLoadedUnits.value = false
   currentRole.value = getUserRole(item)
   imagePreview.value = item.profile_image || null
   selectedFile.value = null
@@ -492,12 +492,12 @@ const editUser = (item: User) => {
     hire_date: item.hire_date ? item.hire_date.split('T')[0] : '',
     birth_date: item.birth_date ? item.birth_date.split('T')[0] : '',
     unit_id: item.unit_id || null,
+    working_calendar_id: item.working_calendar_id || null,
   })
   dialog.value = true
 }
 
 const handleSave = async () => {
-  if (!formRef.value) return
   const { valid } = await formRef.value.validate()
   if (!valid) return
   const authStore = useAuthStore()
@@ -510,10 +510,15 @@ const handleSave = async () => {
     is_employee: roleName === 'employee',
     is_simple: roleName === 'simple',
   }
+
+  if (payload.is_admin) payload.working_calendar_id = null
+
   if (selectedFile.value) (payload as any).image_file = selectedFile.value
   if (isEdit.value && !payload.password) delete payload.password
+
   await userStore.saveUser(payload as any, isEdit.value)
   if (authStore.user && authStore.user.id === editedItem.id) await authStore.getCurrentUser()
+
   await userStore.fetchUsers({
     search: searchQuery.value,
     page: currentPage.value,

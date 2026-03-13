@@ -18,6 +18,8 @@ export interface User {
   language_code: string | null;
   unit_id: number | null;
   unit_name: string | null;
+  working_calendar_id: number | null;
+  working_calendar_name: string | null;
 }
 
 export interface UserPaginationParams {
