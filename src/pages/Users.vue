@@ -7,6 +7,25 @@
           <p class="text-subtitle-1 text-grey-darken-1">{{ $t('app.users.subtitle') }}</p>
         </div>
         <div class="d-flex align-center" style="gap: 16px">
+          <v-select
+            v-model="roleFilter"
+            :items="[
+              { name: 'all', display_name: $t('app.generic.all') },
+              ...roleStore.roles.map((r) => ({
+                name: 'is_' + r.name.toLowerCase(),
+                display_name: r.display_name,
+              })),
+            ]"
+            item-title="display_name"
+            item-value="name"
+            :label="$t('app.users.filter_by_role')"
+            variant="outlined"
+            density="comfortable"
+            hide-details
+            style="width: 200px"
+            @update:model-value="onFilterChange"
+          ></v-select>
+
           <v-text-field
             v-model="searchQuery"
             prepend-inner-icon="mdi-magnify"
@@ -79,7 +98,7 @@
                 <v-icon start size="14" class="mr-1">
                   {{ getRoleIcon(getUserRole(item as User)) }}
                 </v-icon>
-                {{ formatRoleName(getUserRole(item as User)) }}
+                {{ getRoleDisplayName(getUserRole(item as User)) }}
               </v-chip>
             </template>
 
@@ -209,7 +228,7 @@
                 <v-select
                   v-model="currentRole"
                   :items="roleStore.roles"
-                  :item-title="(item) => formatRoleName(item.name)"
+                  item-title="display_name"
                   item-value="name"
                   :label="$t('app.users.role')"
                   variant="outlined"
@@ -328,6 +347,7 @@ const imagePreview = ref<string | null>(null)
 const selectedFile = ref<File | null>(null)
 
 const searchQuery = ref('')
+const roleFilter = ref('all')
 const itemsPerPage = ref(10)
 const currentPage = ref(1)
 let searchTimeout: any = null
@@ -408,15 +428,14 @@ const onFileSelected = (event: Event) => {
   }
 }
 
-const formatRoleName = (name: string) => {
-  if (!name) return ''
-  const clean = name.toLowerCase()
-  return clean === 'hr' ? 'HR' : clean.charAt(0).toUpperCase() + clean.slice(1)
-}
-
 const getRoleIcon = (roleName: string) => {
   const role = roleStore.roles.find((r) => r.name.toLowerCase() === roleName.toLowerCase())
   return role?.icon || 'mdi-account-outline'
+}
+
+const getRoleDisplayName = (roleName: string) => {
+  const role = roleStore.roles.find((r) => r.name === roleName)
+  return role ? role.display_name : roleName
 }
 
 const validateBirthDate = (value: string) => {
@@ -442,6 +461,7 @@ const loadItems = (options: { page: number; itemsPerPage: number }) => {
     page: options.page,
     per_page: options.itemsPerPage,
     search: searchQuery.value,
+    role: roleFilter.value !== 'all' ? roleFilter.value : null,
   })
 }
 
@@ -451,6 +471,11 @@ const onSearchInput = () => {
     currentPage.value = 1
     loadItems({ page: 1, itemsPerPage: itemsPerPage.value })
   }, 600)
+}
+
+const onFilterChange = () => {
+  currentPage.value = 1
+  loadItems({ page: 1, itemsPerPage: itemsPerPage.value })
 }
 
 const openAddModal = () => {
@@ -530,6 +555,7 @@ const handleSave = async () => {
     search: searchQuery.value,
     page: currentPage.value,
     per_page: itemsPerPage.value,
+    role: roleFilter.value !== 'all' ? roleFilter.value : null,
   })
   dialog.value = false
 }
@@ -544,6 +570,7 @@ const confirmDelete = async (item: User) => {
       search: searchQuery.value,
       page: currentPage.value,
       per_page: itemsPerPage.value,
+      role: roleFilter.value !== 'all' ? roleFilter.value : null,
     })
   }
 }

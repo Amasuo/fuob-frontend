@@ -45,10 +45,7 @@ export const useUserStore = defineStore('user', {
             page: params.page || 1,
             per_page: params.per_page || 10,
             search: params.search || '',
-            is_employee: params.is_employee || '',
-            is_validator: params.is_validator || '',
-            is_rh: params.is_rh || '',
-            is_admin: params.is_admin || '',
+            role: params.role || null
           },
         })
         this.users = response.data.data

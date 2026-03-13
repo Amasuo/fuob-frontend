@@ -26,8 +26,5 @@ export interface UserPaginationParams {
   page?: number;
   search?: string;
   per_page?: number;
-  is_employee?: boolean;
-  is_validator?: boolean;
-  is_rh?: boolean;
-  is_admin?: boolean;
+  role?: string | null
 }

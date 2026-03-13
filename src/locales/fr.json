@@ -98,6 +98,7 @@
       "hire_date": "Date d'embauche",
       "birth_date_error": "La date de naissance doit être dans le passé",
       "delete_confirm": "Supprimer {name} ?",
+      "filter_by_role": "Filtrer par rôle",
       "table": {
         "user": "Utilisateur",
         "unit": "Unité",
@@ -159,7 +160,8 @@
     "generic": {
       "required": "Requis",
       "cancel": "Annuler",
-      "save": "Enregistrer"
+      "save": "Enregistrer",
+      "all": "Tous"
     }
   }
 }

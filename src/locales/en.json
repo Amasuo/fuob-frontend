@@ -98,6 +98,7 @@
       "hire_date": "Hire Date",
       "birth_date_error": "Birth date must be in the past",
       "delete_confirm": "Delete {name}?",
+      "filter_by_role": "Filter by Role",
       "table": {
         "user": "User",
         "unit": "Unit",
@@ -159,7 +160,8 @@
     "generic": {
       "required": "Required",
       "cancel": "Cancel",
-      "save": "Save"
+      "save": "Save",
+      "all": "All"
     }
   }
 }
