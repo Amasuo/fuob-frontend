@@ -20,88 +20,92 @@
             @input="onSearchInput"
           ></v-text-field>
 
-          <v-btn color="grey-darken-4" prepend-icon="mdi-plus" height="48" @click="openAddModal">
+          <v-btn
+            color="grey-darken-4"
+            prepend-icon="mdi-plus"
+            height="48"
+            class="rounded-lg px-6"
+            @click="openAddModal"
+          >
             {{ $t('app.working_calendars.add_calendar') }}
           </v-btn>
         </div>
       </v-col>
 
-      <v-col cols="12">
-        <v-card flat border class="rounded-lg">
-          <v-data-table
-            :headers="headers"
-            :items="calendarStore.calendars"
-            :loading="calendarStore.loading"
-            hover
-            class="bg-transparent cursor-pointer"
-            @click:row="(_e, { item }) => editCalendar(item)"
+      <v-col
+        v-for="calendar in calendarStore.calendars"
+        :key="calendar.id"
+        cols="12" sm="6" md="4" lg="3"
+      >
+        <v-card
+          flat
+          border
+          class="rounded-lg pa-5 mb-2"
+          hover
+          @click="editCalendar(calendar)"
+        >
+          <div class="d-flex justify-space-between align-start mb-6">
+            <v-avatar size="36" color="grey-lighten-4" class="rounded-lg">
+              <v-icon color="grey-darken-3" size="22">mdi-calendar-clock</v-icon>
+            </v-avatar>
+
+            <v-chip
+              size="x-small"
+              :color="calendar.is_active ? 'green-darken-1' : 'grey-darken-1'"
+              variant="tonal"
+              class="font-weight-bold px-3 text-uppercase"
+            >
+              {{ calendar.is_active ? $t('app.working_calendars.active') : $t('app.working_calendars.inactive') }}
+            </v-chip>
+          </div>
+
+          <h3
+            class="font-weight-bold text-uppercase text-body-2 mb-4 text-truncate"
+            style="letter-spacing: 0.5px"
           >
-            <template #[`item.cycle_duration`]="{ item }">
-              <v-chip
-                size="small"
-                variant="flat"
-                color="blue-lighten-5"
-                class="text-blue-darken-3 font-weight-bold"
-              >
-                {{ item.cycle_duration }} {{ $t('app.working_calendars.grid.day').toLowerCase() }}s
-              </v-chip>
-            </template>
+            {{ calendar.name }}
+          </h3>
 
-            <template #[`item.cycle_start_date`]="{ item }">
-              {{
-                item.cycle_start_date
-                  ? item.cycle_start_date.split('T')[0].split('-').reverse().join('-')
-                  : '-'
-              }}
-            </template>
+          <div class="text-body-2 mb-4">
+            <div class="d-flex align-center mb-2">
+              <v-icon size="16" color="grey-darken-1" class="mr-3">mdi-refresh</v-icon>
+              <span class="text-grey-darken-1">{{ $t('app.working_calendars.duration') }}</span>
+              <strong class="ml-1 text-grey-darken-4">{{ calendar.cycle_duration }} {{ $t('app.working_calendars.grid.day') }}s</strong>
+            </div>
+            <div class="d-flex align-center">
+              <v-icon size="16" color="grey-darken-1" class="mr-3">mdi-play-outline</v-icon>
+              <span class="text-grey-darken-1">{{ $t('app.working_calendars.start_date') }}</span>
+              <strong class="ml-1 text-grey-darken-4">{{ formatDate(calendar.cycle_start_date) }}</strong>
+            </div>
+          </div>
 
-            <template #[`item.is_active`]="{ item }">
-              <v-chip size="small" :color="item.is_active ? 'green' : 'grey'" variant="tonal">
-                {{
-                  item.is_active
-                    ? $t('app.working_calendars.active')
-                    : $t('app.working_calendars.inactive')
-                }}
-              </v-chip>
-            </template>
+          <v-divider class="mb-3" opacity="0.1"></v-divider>
 
-            <template #[`item.actions`]="{ item }">
-              <div class="d-flex justify-end">
-                <v-btn
-                  icon
-                  variant="text"
-                  size="small"
-                  color="blue-darken-2"
-                  class="mr-2"
-                  @click.stop="editCalendar(item)"
-                >
-                  <v-icon size="20">mdi-pencil-outline</v-icon>
-                </v-btn>
-                <v-btn
-                  icon
-                  variant="text"
-                  size="small"
-                  color="red-lighten-1"
-                  @click.stop="confirmDelete(item)"
-                >
-                  <v-icon size="20">mdi-trash-can-outline</v-icon>
-                </v-btn>
-              </div>
-            </template>
-          </v-data-table>
+          <div class="d-flex justify-end">
+            <v-btn
+              icon="mdi-pencil-outline"
+              variant="text"
+              size="small"
+              color="blue-darken-2"
+              @click.stop="editCalendar(calendar)"
+            ></v-btn>
+            <v-btn
+              icon="mdi-trash-can-outline"
+              variant="text"
+              size="small"
+              color="red-lighten-1"
+              @click.stop="confirmDelete(calendar)"
+            ></v-btn>
+          </div>
         </v-card>
       </v-col>
     </v-row>
 
     <v-dialog v-model="dialog" max-width="1200px" persistent scrollable>
       <v-card class="rounded-lg">
-        <v-toolbar color="white" border-bottom>
+        <v-toolbar color="white" border="b">
           <v-toolbar-title class="font-weight-bold">
-            {{
-              isEdit
-                ? $t('app.working_calendars.edit_calendar')
-                : $t('app.working_calendars.new_calendar')
-            }}
+            {{ isEdit ? $t('app.working_calendars.edit_calendar') : $t('app.working_calendars.new_calendar') }}
           </v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon @click="dialog = false">
@@ -143,6 +147,7 @@
                   variant="outlined"
                   rows="3"
                 ></v-textarea>
+
                 <v-switch
                   v-model="editedItem.is_active"
                   :label="$t('app.working_calendars.active_status')"
@@ -153,61 +158,47 @@
               </v-col>
 
               <v-col cols="12" md="8">
-                <v-sheet border class="rounded-lg overflow-hidden">
-                  <v-table density="compact" fixed-header height="500px">
-                    <thead>
-                      <tr class="bg-grey-lighten-4">
-                        <th width="200">{{ $t('app.working_calendars.grid.label') }}</th>
-                        <th width="100">{{ $t('app.working_calendars.grid.working') }}</th>
-                        <th width="140">{{ $t('app.working_calendars.grid.start') }}</th>
-                        <th width="140">{{ $t('app.working_calendars.grid.end') }}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="(day, index) in editedItem.days" :key="index">
-                        <td>
-                          <v-text-field
-                            v-model="day.day_label"
-                            density="compact"
-                            variant="outlined"
-                            hide-details
-                            class="my-1"
-                            placeholder="e.g. Morning Shift"
-                          ></v-text-field>
-                        </td>
-                        <td>
-                          <v-checkbox-btn
-                            v-model="day.is_working"
-                            color="primary"
-                            @update:model-value="clearTimesIfRestDay(day)"
-                          ></v-checkbox-btn>
-                        </td>
-                        <td>
+                <v-row dense>
+                  <v-col v-for="(day, index) in editedItem.days" :key="index" cols="12" sm="6">
+                    <v-card flat border class="pa-4 rounded-lg mb-2">
+                      <div class="d-flex align-center justify-space-between mb-2">
+                        <span class="font-weight-bold text-uppercase text-caption text-grey">
+                          {{ $t('app.working_calendars.grid.day') }} {{ index + 1 }}
+                        </span>
+                        <v-checkbox-btn
+                          v-model="day.is_working"
+                          color="primary"
+                          density="compact"
+                        ></v-checkbox-btn>
+                      </div>
+
+                      <v-row dense>
+                        <v-col cols="6">
                           <v-text-field
                             v-model="day.start_time"
                             :disabled="!day.is_working"
                             type="time"
                             density="compact"
                             variant="outlined"
-                            class="my-1"
-                            :rules="day.is_working ? [(v) => !!v || 'Req'] : []"
+                            :label="$t('app.working_calendars.grid.start')"
+                            hide-details
                           ></v-text-field>
-                        </td>
-                        <td>
+                        </v-col>
+                        <v-col cols="6">
                           <v-text-field
                             v-model="day.end_time"
                             :disabled="!day.is_working"
                             type="time"
                             density="compact"
                             variant="outlined"
-                            class="my-1"
-                            :rules="day.is_working ? [(v) => !!v || 'Req'] : []"
+                            :label="$t('app.working_calendars.grid.end')"
+                            hide-details
                           ></v-text-field>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </v-table>
-                </v-sheet>
+                        </v-col>
+                      </v-row>
+                    </v-card>
+                  </v-col>
+                </v-row>
               </v-col>
             </v-row>
           </v-form>
@@ -216,8 +207,15 @@
         <v-divider></v-divider>
         <v-card-actions class="pa-4">
           <v-spacer></v-spacer>
-          <v-btn variant="text" @click="dialog = false">{{ $t('app.generic.cancel') }}</v-btn>
-          <v-btn color="black" :loading="calendarStore.saving" @click="handleSave">
+          <v-btn variant="text" @click="dialog = false">
+            {{ $t('app.generic.cancel') }}
+          </v-btn>
+          <v-btn
+            color="grey-darken-4"
+            :loading="calendarStore.saving"
+            @click="handleSave"
+            class="px-6"
+          >
             {{ $t('app.generic.save') }}
           </v-btn>
         </v-card-actions>
@@ -227,7 +225,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useWorkingCalendarStore, type WorkingCalendar } from '@/stores/working-calendar'
 import { useI18n } from 'vue-i18n'
 
@@ -238,14 +236,6 @@ const isEdit = ref(false)
 const formRef = ref<any>(null)
 const searchQuery = ref('')
 let searchTimeout: any = null
-
-const headers = computed(() => [
-  { title: t('app.working_calendars.headers.name'), key: 'name' },
-  { title: t('app.working_calendars.headers.duration'), key: 'cycle_duration' },
-  { title: t('app.working_calendars.headers.start_date'), key: 'cycle_start_date' },
-  { title: t('app.working_calendars.headers.status'), key: 'is_active', align: 'center' as const },
-  { title: '', key: 'actions', sortable: false, align: 'end' as const },
-])
 
 const editedItem = reactive<WorkingCalendar>({
   id: null,
@@ -258,6 +248,11 @@ const editedItem = reactive<WorkingCalendar>({
 })
 
 onMounted(() => calendarStore.fetchCalendars({}))
+
+const formatDate = (dateStr: string) => {
+  if (!dateStr) return '-'
+  return dateStr.split('T')[0].split('-').reverse().join('-')
+}
 
 const onSearchInput = () => {
   if (searchTimeout) clearTimeout(searchTimeout)
@@ -276,7 +271,7 @@ const syncDaysCount = () => {
       editedItem.days.push({
         day_number: num,
         is_working: true,
-        day_label: `Day ${num + 1}`,
+        day_label: '',
         start_time: '08:00',
         end_time: '16:00',
       })
@@ -323,9 +318,3 @@ const confirmDelete = async (item: any) => {
   }
 }
 </script>
-
-<style scoped>
-.cursor-pointer :deep(tbody tr) {
-  cursor: pointer;
-}
-</style>
