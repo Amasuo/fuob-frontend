@@ -45,7 +45,8 @@
       "roles": "Roles",
       "languages": "Languages",
       "units": "Units",
-      "workingcalendars": "Working Calendars"
+      "workingcalendars": "Working Calendars",
+      "holidays": "Public Holidays"
     },
     "profile": {
       "image": {
@@ -157,11 +158,26 @@
         "end": "End"
       }
     },
+
+    "holidays": {
+    "title": "Public Holidays",
+    "subtitle": "Manage public holidays and calendar events.",
+    "add_holiday": "Add Holiday",
+    "edit_holiday": "Edit Holiday",
+    "date": "Date",
+    "name": "Name",
+    "month_events": "Events this month",
+    "no_holiday": "No holidays",
+    "delete_confirm": "Delete {name}?"
+    },
+
     "generic": {
       "required": "Required",
       "cancel": "Cancel",
       "save": "Save",
-      "all": "All"
+      "all": "All",
+      "search": "Search",
+      "actions": "Actions"
     }
   }
 }
