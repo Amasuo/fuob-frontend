@@ -15,9 +15,16 @@ export interface HolidayPayload {
   date: string
 }
 
+interface HolidayPaginationParams {
+  page?: number
+  per_page?: number
+  search?: string
+}
+
 export const useHolidayStore = defineStore('holiday', {
   state: () => ({
     holidays: [] as Holiday[],
+    totalItems: 0,
     loading: false,
     saving: false,
   }),
@@ -33,25 +40,34 @@ export const useHolidayStore = defineStore('holiday', {
       }
     },
 
-    async fetchHolidays(): Promise<void> {
+    async fetchHolidays(params: HolidayPaginationParams): Promise<void> {
       this.loading = true
       try {
-        const response = await axios.get('http://localhost/api/holidays',
-          this.getAuthConfig()
-        )
+        const response = await axios.get('http://localhost/api/holidays', {
+          ...this.getAuthConfig(),
+          params: {
+            page: params.page || 1,
+            per_page: params.per_page || 10,
+            search: params.search || '',
+          },
+        })
         this.holidays = response.data.data
+        this.totalItems = response.data.meta.total
       } catch (error: any) {
-        if (error.response?.status === 404) {
-          this.holidays = []
-        } else {
+        // Handle 404 gracefully if no units are found matching the search
+        if (error.response?.status !== 404) {
           showErrorToast(error.response?.data?.message || 'Failed to fetch holidays.')
+        } else {
+          this.holidays = []
+          this.totalItems = 0
         }
+        throw error
       } finally {
         this.loading = false
       }
     },
 
-    async saveHoliday(payload: HolidayPayload, isEdit: boolean): Promise<boolean> {
+    async saveHoliday(payload: any, isEdit: boolean): Promise<boolean> {
       this.saving = true
       try {
         let response

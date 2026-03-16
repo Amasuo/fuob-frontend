@@ -92,11 +92,17 @@
           </template>
 
           <template v-else>
-            <v-data-table
+            <v-data-table-server
+              v-model:items-per-page="itemsPerPage"
+              v-model:page="currentPage"
               :headers="headers"
-              :items="filteredHolidays"
+              :items="holidayStore.holidays"
+              :items-length="holidayStore.totalItems"
+              :loading="holidayStore.loading"
               hover
-              class="bg-transparent"
+              class="bg-transparent cursor-pointer"
+              @update:options="loadItems"
+              @click:row="(event, row) => editHoliday(row.item)"
             >
               <template #[`item.date`]="{ item }">
                 <div class="font-weight-bold text-body-2">
@@ -113,7 +119,7 @@
                   </v-btn>
                 </div>
               </template>
-            </v-data-table>
+            </v-data-table-server>
           </template>
         </v-card>
       </v-col>
@@ -205,9 +211,11 @@ const holidayStore = useHolidayStore()
 const viewType     = ref('calendar')
 const dialog       = ref(false)
 const isEdit       = ref(false)
+const formRef = ref()
+const itemsPerPage = ref(10)
+const currentPage = ref(1)
 const searchQuery  = ref('')
-const formRef      = ref<any>(null)
-let   searchTimeout: any = null
+let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
 const daysOfWeek = ['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM', 'DIM']
 const monthNames = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']
@@ -224,17 +232,34 @@ const headers = [
   { title: t('app.generic.actions'), key: 'actions', align: 'end' as const, sortable: false },
 ]
 
+onMounted(() => {
+  holidayStore.fetchHolidays({ page: 1, per_page: 10 })
+})
+
 const filteredHolidays = computed(() =>
   holidayStore.holidays.filter(h =>
     h.name.toLowerCase().includes(searchQuery.value.toLowerCase())
   )
 )
 
-const reload = () => holidayStore.fetchHolidays()
+const loadItems = (options?: any) => {
+  if (options) {
+    currentPage.value = options.page
+    itemsPerPage.value = options.itemsPerPage
+  }
+  holidayStore.fetchHolidays({
+    page: currentPage.value,
+    per_page: itemsPerPage.value,
+    search: searchQuery.value,
+  })
+}
 
 const onSearchInput = () => {
   if (searchTimeout) clearTimeout(searchTimeout)
-  searchTimeout = setTimeout(() => {}, 400)
+  searchTimeout = setTimeout(() => {
+    currentPage.value = 1
+    loadItems()
+  }, 600)
 }
 
 const daysInMonth = computed(() =>
@@ -311,21 +336,17 @@ const handleSave = async () => {
   const { valid } = await formRef.value.validate()
   if (!valid) return
 
-  const ok = await holidayStore.saveHoliday(editedItem as Holiday, isEdit.value)
-  if (ok) {
-    await reload()
-    dialog.value = false
-  }
+  await holidayStore.saveHoliday(editedItem, isEdit.value)
+  dialog.value = false
+  loadItems()
 }
 
-const confirmDelete = async (h: Holiday) => {
-  if (confirm(t('app.holidays.delete_confirm', { name: h.name }))) {
-    const ok = await holidayStore.deleteHoliday(h.id)
-    if (ok) await reload()
+const confirmDelete = async (item: any) => {
+  if (confirm(t('app.holidays.delete_confirm', { name: item.name }))) {
+    await holidayStore.deleteHoliday(item.id)
+    loadItems()
   }
 }
-
-onMounted(reload)
 </script>
 
 <style scoped>
