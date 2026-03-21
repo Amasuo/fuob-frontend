@@ -45,7 +45,8 @@
       "roles": "Rôles",
       "languages": "Langues",
       "units": "Unités",
-      "workingcalendars": "Calendriers de travail"
+      "workingcalendars": "Calendriers de travail",
+      "holidays": "Jours fériés"
     },
     "profile": {
       "image": {
@@ -157,11 +158,25 @@
         "end": "Fin"
       }
     },
+
+    "holidays": {
+    "title": "Jours fériés",
+    "subtitle": "Gérez les jours fériés et les événements du calendrier.",
+    "add_holiday": "Ajouter un jour férié",
+    "edit_holiday": "Modifier le jour férié",
+    "date": "Date",
+    "name": "Nom",
+    "month_events": "Événements du mois",
+    "no_holiday": "Aucun jour férié",
+    "delete_confirm": "Supprimer {name} ?"
+    },
     "generic": {
       "required": "Requis",
       "cancel": "Annuler",
       "save": "Enregistrer",
-      "all": "Tous"
+      "all": "Tous",
+      "search": "Rechercher",
+      "actions": "Actions"
     }
   }
 }

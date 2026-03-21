@@ -150,6 +150,7 @@ const getIcon = (name: string) => {
     languages: 'mdi-translate',
     units: 'mdi-domain',
     workingcalendars: 'mdi-calendar-clock-outline',
+    holidays: 'mdi-party-popper',
   }
   return icons[name.toLowerCase()] || 'mdi-file-outline'
 }
