@@ -46,7 +46,8 @@
       "languages": "Languages",
       "units": "Units",
       "workingcalendars": "Working Calendars",
-      "holidays": "Public Holidays"
+      "holidays": "Public Holidays",
+      "leavetypes": "Leave Types"
     },
     "profile": {
       "image": {
@@ -171,6 +172,39 @@
     "delete_confirm": "Delete {name}?"
     },
 
+    "leave_types": {
+      "new": "New Leave Type",
+      "code": "Code (e.g., AL, SICK)",
+      "name": "Type Name (e.g., Annual Leave)",
+      "edit": "Edit Leave Type",
+      "title": "Leave Types",
+      "subtitle": "Configure leave types and their rules.",
+      "search_placeholder": "Search types...",
+      "add_new": "Add New Type",
+      "color_label": "Display Color",
+      "color_desc": "Choose a color to identify this type on the calendar.",
+      "policies_config": "Policies Configuration",
+      "delete_confirm": "Delete {name}?",
+      "status_active": "Active",
+      "status_inactive": "Inactive",
+      "rules": {
+        "title": "Rules",
+        "is_paid": "Paid Leave",
+        "is_paid_desc": "Employee is paid during this leave.",
+        "has_balance": "Uses Balance",
+        "has_balance_desc": "This leave is deducted from the annual counter.",
+        "requires_doc": "Requires Documentation",
+        "requires_doc_desc": "An official document is mandatory for validation.",
+        "rh_only_check": "HR Validation Only",
+        "rh_only_check_desc": "This type does not require direct manager approval."
+      },
+      "table": {
+        "name": "Leave Type",
+        "rules": "Rules & Conditions",
+        "status": "Status",
+        "actions": "Actions"
+      }
+    },
     "generic": {
       "required": "Required",
       "cancel": "Cancel",
