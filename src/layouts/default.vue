@@ -151,6 +151,7 @@ const getIcon = (name: string) => {
     units: 'mdi-domain',
     workingcalendars: 'mdi-calendar-clock-outline',
     holidays: 'mdi-party-popper',
+    leavetypes: 'mdi-playlist-edit',
   }
   return icons[name.toLowerCase()] || 'mdi-file-outline'
 }

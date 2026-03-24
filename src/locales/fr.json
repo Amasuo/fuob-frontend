@@ -46,7 +46,8 @@
       "languages": "Langues",
       "units": "Unités",
       "workingcalendars": "Calendriers de travail",
-      "holidays": "Jours fériés"
+      "holidays": "Jours fériés",
+      "leavetypes": "Types de congés"
     },
     "profile": {
       "image": {
@@ -169,6 +170,40 @@
     "month_events": "Événements du mois",
     "no_holiday": "Aucun jour férié",
     "delete_confirm": "Supprimer {name} ?"
+    },
+
+    "leave_types": {
+      "new": "Nouveau type de congé",
+      "code": "Code (ex: CP, MALADIE)",
+      "name": "Nom du type (ex: Congé Payé)",
+      "edit": "Modifier le type de congé",
+      "title": "Types de congés",
+      "subtitle": "Configurez les types de congés et leurs règles.",
+      "search_placeholder": "Rechercher un type...",
+      "add_new": "Ajouter un type",
+      "color_label": "Couleur d'affichage",
+      "color_desc": "Choisissez une couleur pour identifier ce type dans le calendrier.",
+      "policies_config": "Configuration des politiques",
+      "delete_confirm": "Supprimer {name} ?",
+      "status_active": "Actif",
+      "status_inactive": "Inactif",
+      "rules": {
+        "title": "Règles",
+        "is_paid": "Congé payé",
+        "is_paid_desc": "Le collaborateur est rémunéré pendant ce congé.",
+        "has_balance": "Soumis à un solde",
+        "has_balance_desc": "Ce congé est déduit du compteur annuel.",
+        "requires_doc": "Justificatif requis",
+        "requires_doc_desc": "Un document officiel est obligatoire pour valider.",
+        "rh_only_check": "Validation RH uniquement",
+        "rh_only_check_desc": "Ce type ne nécessite pas l'avis du manager direct."
+      },
+      "table": {
+        "name": "Type de congé",
+        "rules": "Règles et conditions",
+        "status": "Statut",
+        "actions": "Actions"
+      }
     },
     "generic": {
       "required": "Requis",
