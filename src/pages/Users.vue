@@ -116,15 +116,29 @@
               </v-chip>
             </template>
 
-            <template #[`item.actions`]="{ item }">
+            <template #[`item.actions`]="{ item }: { item: User }">
               <div class="d-flex justify-end">
+                <v-btn
+                  v-if="!item.invitation_sent"
+                  icon
+                  variant="text"
+                  size="small"
+                  color="orange-darken-2"
+                  :loading="isInvitationLoading(item.id)"
+                  @click.stop="handleResendInvitation(item)"
+                >
+                  <v-icon size="20">mdi-email-sync-outline</v-icon>
+                  <v-tooltip activator="parent" location="top">
+                    {{ $t('app.users.resend_invitation') }}
+                  </v-tooltip>
+                </v-btn>
                 <v-btn
                   icon
                   variant="text"
                   size="small"
                   color="blue-darken-2"
                   class="mr-2"
-                  @click.stop="editUser(item as User)"
+                  @click.stop="editUser(item)"
                 >
                   <v-icon size="20">mdi-pencil-outline</v-icon>
                 </v-btn>
@@ -133,7 +147,7 @@
                   variant="text"
                   size="small"
                   color="red-lighten-1"
-                  @click.stop="confirmDelete(item as User)"
+                  @click.stop="confirmDelete(item)"
                 >
                   <v-icon size="20">mdi-trash-can-outline</v-icon>
                 </v-btn>
@@ -573,6 +587,17 @@ const confirmDelete = async (item: User) => {
       role: roleFilter.value !== 'all' ? roleFilter.value : null,
     })
   }
+}
+
+const handleResendInvitation = async (item: User) => {
+  if (item.id == null) return
+
+  await userStore.resendInvitation(item.id)
+}
+
+const isInvitationLoading = (id: number | null): boolean => {
+  if (id == null) return false
+  return userStore.loadingInvitation[id] === true
 }
 </script>
 

@@ -23,6 +23,7 @@ export const useUserStore = defineStore('user', {
     totalItems: 0,
     loading: false,
     saving: false,
+    loadingInvitation: {} as Record<number, boolean>,
   }),
 
   actions: {
@@ -100,6 +101,27 @@ export const useUserStore = defineStore('user', {
       } catch (error: any) {
         showErrorToast(error.response?.data?.message || 'Failed to delete user.')
         throw error
+      }
+    },
+
+    async resendInvitation(id: number): Promise<void> {
+      this.loadingInvitation[id] = true
+      try {
+        const config = this.getAuthConfig()
+        const response = await axios.post(`http://localhost/api/user/${id}/resend-invitation`, {}, config)
+
+        const index = this.users.findIndex((u) => u.id === id)
+
+        if (index !== -1 && response.data.data) {
+          this.users[index].invitation_sent = response.data.data.invitation_sent
+          showSuccessToast(response.data.message || 'Invitation resent successfully!')
+        }
+      } catch (error: any) {
+        showErrorToast(
+          error.response?.data?.message || 'Failed to resend invitation.'
+        )
+      } finally {
+        this.loadingInvitation[id] = false
       }
     },
   },
