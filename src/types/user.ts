@@ -4,6 +4,7 @@ export interface User {
   lastname: string;
   full_name?: string;
   email: string;
+  invitation_sent: boolean;
   employee_number: string;
   is_active: boolean;
   hire_date: string;

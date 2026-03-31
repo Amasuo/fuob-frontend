@@ -101,6 +101,7 @@
       "birth_date_error": "Birth date must be in the past",
       "delete_confirm": "Delete {name}?",
       "filter_by_role": "Filter by Role",
+      "resend_invitation": "Resend Invitation",
       "table": {
         "user": "User",
         "unit": "Unit",
