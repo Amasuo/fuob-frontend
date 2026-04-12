@@ -24,7 +24,7 @@
       "welcome": "Welcome Back!",
       "credentials_prompt": "Please enter your credentials to access your dashboard",
       "email": "Email Address",
-      "email_placeholder": "name@company.com",
+      "email_placeholder": "name{'@'}company.com",
       "email_required": "Email is required",
       "email_invalid": "E-mail must be valid",
       "password": "Password",
@@ -47,7 +47,9 @@
       "units": "Units",
       "workingcalendars": "Working Calendars",
       "holidays": "Public Holidays",
-      "leavetypes": "Leave Types"
+      "leavetypes": "Leave Types",
+      "leaveprofiles": "Leave Profiles",
+      "workflows": "Workflows"
     },
     "profile": {
       "image": {
@@ -177,6 +179,9 @@
       "new": "New Leave Type",
       "code": "Code (e.g., AL, SICK)",
       "name": "Type Name (e.g., Annual Leave)",
+      "description": "Description",
+      "max_duration": "Maximum Duration",
+      "annual_locked_warning": "This leave type is protected. Critical parameters are locked by the system.",
       "edit": "Edit Leave Type",
       "title": "Leave Types",
       "subtitle": "Configure leave types and their rules.",
@@ -188,16 +193,35 @@
       "delete_confirm": "Delete {name}?",
       "status_active": "Active",
       "status_inactive": "Inactive",
+      "annual_code_hint": "The system code cannot be modified.",
+      "gender_restriction": "Gender Restriction",
+      "day_count_method": "Day Counting Method",
+      "lock_enabled": "Method Locked",
+      "lock_disabled": "Flexible Method",
+      "lock_enabled_desc": "Fixed for all leave profiles.",
+      "lock_disabled_desc": "Adjustable per leave profile.",
+      "gender": {
+          "none": "No restriction",
+          "male": "Male only",
+          "female": "Female only"
+        },
+      "day_count": {
+        "working": "Working Days",
+        "business": "Business Days",
+        "calendar": "Calendar Days"
+      },
       "rules": {
         "title": "Rules",
-        "is_paid": "Paid Leave",
-        "is_paid_desc": "Employee is paid during this leave.",
-        "has_balance": "Uses Balance",
-        "has_balance_desc": "This leave is deducted from the annual counter.",
+        "is_annual": "Annual Leave",
+        "is_annual_desc": "Protected system type: the main paid leave.",
+        "has_balance": "Deductible from balance",
+        "has_balance_desc": "Impacts the employee's counter.",
         "requires_doc": "Requires Documentation",
         "requires_doc_desc": "An official document is mandatory for validation.",
-        "rh_only_check": "HR Validation Only",
-        "rh_only_check_desc": "This type does not require direct manager approval."
+        "is_hr_only": "HR Validation Only",
+        "is_hr_only_desc": "The request is processed exclusively by the HR department.",
+        "is_effective_work": "Effective Work",
+        "is_effective_work_desc": "Counts as working time."
       },
       "table": {
         "name": "Leave Type",
@@ -206,13 +230,103 @@
         "actions": "Actions"
       }
     },
+    "leave_profiles": {
+      "title": "Leave Profiles",
+      "subtitle": "Set up annual quotas, carryover limits, and seniority bonuses by category.",
+      "search_placeholder": "Search profiles...",
+      "add_new": "New Profile",
+      "edit": "Edit Profile",
+      "new": "New Profile",
+      "code": "Code",
+      "name": "Profile Name",
+      "description": "Description",
+      "status_active": "Active",
+      "status_inactive": "Inactive",
+      "no_rules": "No rules configured",
+      "with_balance": "Deducted from balance",
+      "without_balance": "Not deducted",
+      "day_count_method": "Day Calculation Method",
+      "locked_on": "Locked on",
+      "base_quota": "Annual Quota",
+      "carryover_limit": "Carryover Limit",
+      "seniority_bonus": "Seniority Bonus",
+      "seniority_cycle": "Cycle (Years)",
+      "seniority_gain": "Gain (Days)",
+      "seniority_max": "Max (Days)",
+      "default_locked_warning": "This is the default profile. Some fields are protected and cannot be modified.",
+      "globally_disabled": "This leave type is currently inactive at the system level.",
+      "globally_disabled_short": "Inactive",
+      "add_specific_type": "Add Specific Leave Type",
+      "main_type_mandatory": "Main Type (Mandatory)",
+      "additional_rule": "Additional Rule",
+      "calculation_method": "Calculation Method",
+      "types_configured": "type configured | types configured",
+      "rules_config": "Rules Configuration",
+      "delete_confirm": "Delete profile {name}?",
+      "summary": {
+        "days": "d",
+        "years": "year | years",
+        "base": "Base",
+        "max_report": "Max",
+        "no_rules": "No rules configured"
+      },
+      "day_count": {
+        "working": "Working Days",
+        "business": "Business Days",
+        "calendar": "Calendar Days",
+        "default_system": "Inherited"
+      },
+      "table": {
+        "name": "Profile",
+        "rules": "Rules Summary",
+        "status": "Status",
+        "actions": "Actions"
+      }
+    },
+    "validation": {
+      "must_be_at_least_1": "Value must be at least 1.",
+      "must_be_positive": "Value must be positive (0 or more)."
+    },
     "generic": {
       "required": "Required",
       "cancel": "Cancel",
       "save": "Save",
       "all": "All",
       "search": "Search",
-      "actions": "Actions"
+      "actions": "Actions",
+      "days": "0 days | {count} day | {count} days",
+      "years": "0 years | {count} year | {count} years"
+    },
+    "workflows": {
+      "title": "Workflows",
+      "subtitle": "Configure validation circuits (Max 2 steps + HR).",
+      "search_placeholder": "Search a circuit...",
+      "add_new": "New Workflow",
+      "edit_title": "Edit Workflow",
+      "name_label": "Workflow Name",
+      "name_placeholder": "Ex: General Management Circuit",
+      "structure": "Circuit Structure",
+      "steps_count": "{count} / 2 steps",
+      "step_type_specific": "Specific Validator",
+      "add_step": "Add Validator",
+      "manage_replacement": "Manage replacement",
+      "add_replacement": "+ Replacement",
+      "hr_dept": "HR Department",
+      "final_validation": "Final Validation",
+      "temp_replacement": "Temporary Replacement",
+      "replacement_user": "Replacement",
+      "start_date": "Start Date",
+      "end_date": "End Date",
+      "apply": "Apply",
+      "delete_confirm": "Delete workflow \"{name}\"?",
+      "table": {
+        "name": "Workflow Name",
+        "circuit": "Validation Circuit"
+      },
+      "validation": {
+        "name_required": "Name is required",
+        "select_user": "Select an employee"
+      }
     }
   }
 }

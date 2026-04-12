@@ -47,7 +47,10 @@
       "units": "Unités",
       "workingcalendars": "Calendriers de travail",
       "holidays": "Jours fériés",
-      "leavetypes": "Types de congés"
+      "leavetypes": "Types de congés",
+      "leaveprofiles": "Profils de congés",
+      "workflows": "Workflows"
+
     },
     "profile": {
       "image": {
@@ -177,6 +180,9 @@
       "new": "Nouveau type de congé",
       "code": "Code (ex: CP, MALADIE)",
       "name": "Nom du type (ex: Congé Payé)",
+      "description": "Description",
+      "max_duration": "Durée maximale",
+      "annual_locked_warning": "Ce type de congé est protégé. Les paramètres critiques sont verrouillés par le système.",
       "edit": "Modifier le type de congé",
       "title": "Types de congés",
       "subtitle": "Configurez les types de congés et leurs règles.",
@@ -188,16 +194,35 @@
       "delete_confirm": "Supprimer {name} ?",
       "status_active": "Actif",
       "status_inactive": "Inactif",
+      "gender_restriction": "Restriction de genre",
+      "annual_code_hint": "Le code système ne peut pas être modifié.",
+      "day_count_method": "Méthode de décompte",
+      "lock_enabled": "Méthode Verrouillée",
+      "lock_disabled": "Méthode Flexible",
+      "lock_enabled_desc": "Fixe pour tous les profils.",
+      "lock_disabled_desc": "Ajustable par profil de congé.",
+      "day_count": {
+      "working": "Jours Ouvrables",
+      "business": "Jours Ouvrés",
+      "calendar": "Jours Calendaires"
+      },
+      "gender": {
+        "none": "Aucune restriction",
+        "male": "Hommes uniquement",
+        "female": "Femmes uniquement"
+      },
       "rules": {
         "title": "Règles",
-        "is_paid": "Congé payé",
-        "is_paid_desc": "Le collaborateur est rémunéré pendant ce congé.",
-        "has_balance": "Soumis à un solde",
-        "has_balance_desc": "Ce congé est déduit du compteur annuel.",
+        "is_annual": "Congé annuel",
+        "is_annual_desc": "Type système protégé : le congé payé principal.",
+        "has_balance": "Déductible du solde",
+        "has_balance_desc": "Impacte le compteur de l'employé.",
         "requires_doc": "Justificatif requis",
         "requires_doc_desc": "Un document officiel est obligatoire pour valider.",
-        "rh_only_check": "Validation RH uniquement",
-        "rh_only_check_desc": "Ce type ne nécessite pas l'avis du manager direct."
+        "is_hr_only": "Validation RH uniquement",
+        "is_hr_only_desc": "La demande est traitée exclusivement par le service RH.",
+        "is_effective_work": "Travail effectif",
+        "is_effective_work_desc": "Compte comme temps de travail."
       },
       "table": {
         "name": "Type de congé",
@@ -206,13 +231,103 @@
         "actions": "Actions"
       }
     },
+    "leave_profiles": {
+      "title": "Profils de Congés",
+      "subtitle": "Configurez les quotas annuels, les limites de report et les bonus d'ancienneté par catégorie.",
+      "search_placeholder": "Rechercher des profils...",
+      "add_new": "Nouveau Profil",
+      "edit": "Modifier le Profil",
+      "new": "Nouveau Profil",
+      "code": "Code",
+      "name": "Nom du Profil",
+      "description": "Description",
+      "status_active": "Actif",
+      "status_inactive": "Inactif",
+      "app.leave_profiles.no_rules": "Aucune règle configurée",
+      "with_balance": "Déduit du solde",
+      "without_balance": "Non déduit",
+      "day_count_method": "Méthode de calcul des jours",
+      "locked_on": "Verrouillé sur",
+      "base_quota": "Quota Annuel",
+      "carryover_limit": "Limite de Report",
+      "seniority_bonus": "Prime d'Ancienneté",
+      "seniority_cycle": "Cycle (Années)",
+      "seniority_gain": "Gain (Jours)",
+      "seniority_max": "Maximum (Jours)",
+      "default_locked_warning": "Ceci est le profil par défaut. Certains champs sont protégés et ne peuvent pas être modifiés.",
+      "globally_disabled": "Ce type de congé est actuellement désactivé au niveau du système.",
+      "globally_disabled_short": "Inactif",
+      "rules_config": "Configuration des règles",
+      "add_specific_type": "Ajouter un type de congé spécifique",
+      "main_type_mandatory": "Type Principal (Obligatoire)",
+      "additional_rule": "Règle additionnelle",
+      "calculation_method": "Méthode de calcul",
+      "types_configured": "type configuré | types configurés",
+      "delete_confirm": "Supprimer le profil {name} ?",
+      "summary": {
+        "days": "j",
+        "years": "an | ans",
+        "base": "Base",
+        "max_report": "Max",
+        "no_rules": "Aucune règle configurée"
+      },
+      "day_count": {
+        "working": "Jours Ouvrés",
+        "business": "Jours Ouvrables",
+        "calendar": "Jours Calendaires",
+        "default_system": "Héritée"
+      },
+      "table": {
+        "name": "Profil",
+        "rules": "Résumé des règles",
+        "status": "Statut",
+        "actions": "Actions"
+      }
+    },
+    "validation": {
+      "must_be_at_least_1": "La valeur doit être au moins 1.",
+      "must_be_positive": "La valeur doit être positive (0 ou plus)."
+    },
     "generic": {
       "required": "Requis",
       "cancel": "Annuler",
       "save": "Enregistrer",
       "all": "Tous",
       "search": "Rechercher",
-      "actions": "Actions"
+      "actions": "Actions",
+      "days": "0 jour | {count} jour | {count} jours"
+    },
+
+    "workflows": {
+      "title": "Workflows",
+      "subtitle": "Configurez les circuits de validation (Max 2 étapes + RH).",
+      "search_placeholder": "Rechercher un circuit...",
+      "add_new": "Nouveau Workflow",
+      "edit_title": "Modifier le Workflow",
+      "name_label": "Nom du workflow",
+      "name_placeholder": "Ex: Circuit Direction Générale",
+      "structure": "Structure du circuit",
+      "steps_count": "{count} / 2 étapes",
+      "step_type_specific": "Validateur spécifique",
+      "add_step": "Ajouter un validateur",
+      "manage_replacement": "Gérer le remplacement",
+      "add_replacement": "+ Remplacement",
+      "hr_dept": "Département RH",
+      "final_validation": "Validation finale",
+      "temp_replacement": "Remplacement temporaire",
+      "replacement_user": "Remplaçant",
+      "start_date": "Date de début",
+      "end_date": "Date de fin",
+      "apply": "Appliquer",
+      "delete_confirm": "Supprimer le workflow \"{name}\" ?",
+      "table": {
+        "name": "Nom du Workflow",
+        "circuit": "Circuit de validation"
+      },
+      "validation": {
+        "name_required": "Le nom est obligatoire",
+        "select_user": "Sélectionner un employé"
+      }
     }
   }
 }

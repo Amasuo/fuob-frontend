@@ -7,12 +7,18 @@ export interface LeaveType {
   id: number | null
   code: string
   name: string
+  description: string | null
   color: string
-  is_paid: boolean
+  is_annual: boolean
   has_balance: boolean
   requires_doc: boolean
-  validation_rh_only: boolean
+  is_hr_only: boolean
   is_active: boolean
+  is_effective_work: boolean
+  lock_day_count_method: boolean
+  gender_restriction: 'none' | 'male' | 'female'
+  day_count_method: 'working' | 'business' | 'calendar'
+  max_duration: number | null
 }
 
 interface LeaveTypePaginationParams {
